@@ -1,23 +1,61 @@
 ﻿#include "Map.h"
 
-Map::Map()
+Map::Map() :
+	continents_(new vector<Continent*>()),
+	countries_(new vector<Country*>()) {}
+
+Map::Map(vector<Continent*>* continents, vector<Country*>* countries) :
+	continents_(continents),
+	countries_(countries) {}
+
+bool Map::validate_connected_graph() const
 {
-	continents_ = new vector<Continent*>();
-	countries_ = new vector<Country*>();
+	vector<bool>* was_visited = new vector<bool>(countries_->size(), false);
+	depth_first_traversal(countries_->at(0), was_visited);
+
+	for (auto const& b : *was_visited)
+	{
+		if (!b)
+			return false;
+	}
+
+	return true;
 }
 
-Map::Map(vector<Continent*>* continents, vector<Country*>* countries)
+bool Map::validate_continent_singularity()
 {
-	continents_ = continents;
-	countries_ = countries;
+	for(auto const& country: *countries_)
+	{
+		bool found_continent = false;
+
+		for(auto const& continent: *continents_)
+		{
+			if(continent->has_country(country))
+			{
+				if(found_continent)
+				{
+					return false; //This happens when the country is found twice
+				}
+
+				found_continent = true;
+			}
+		}
+
+		if(!found_continent)
+		{
+			return false; //This would mean we didn't find a single continent that had this country
+		}
+	}
+
+	return true;
 }
 
-void Map::depth_first_traversal(Country* country, bool* visited_countries) const
+void Map::depth_first_traversal(Country* country, vector<bool>* visited_countries) const
 {
-	visited_countries[get_country_index(country)] = true;
+	visited_countries->at(get_country_index(country)) = true; //The current country is now being visited, mark as true.
 	for (auto const& c : *country->get_adjacent_countries())
 	{
-		if (!visited_countries[get_country_index(c)])
+		if (!visited_countries->at(get_country_index(c))) //Do not visit countries that have already been visited.
 		{
 			depth_first_traversal(c, visited_countries);
 		}
@@ -36,22 +74,14 @@ int Map::get_country_index(Country* country) const
 	return -1; //Didn't get any index...
 }
 
-Continent::Continent()
-{
-	name_ = nullptr;
-	countries_ = new vector<Country*>();
-}
-
-Continent::Continent(string name)
-{
-	name_ = &name;
-	countries_ = new vector<Country*>();
-}
+Continent::Continent(string name) :
+	name_(new string(name)),
+	countries_(new vector<Country*>()) {}
 
 
-string* Continent::get_name() const
+string Continent::get_name() const
 {
-	return name_;
+	return *name_;
 }
 
 vector<Country*>* Continent::get_countries() const
@@ -59,22 +89,50 @@ vector<Country*>* Continent::get_countries() const
 	return countries_;
 }
 
+bool Continent::has_country(Country* c)
+{
+	for(auto const& country: *countries_)
+	{
+		if(c->get_name() == country->get_name())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Continent::set_name(string* name)
 {
 	name_ = name;
 }
 
-void Continent::validate_continent(Country* country, bool* visited_countries) const
+void Continent::depth_first_traversal(Country* country, vector<bool>* visited_countries) const
 {
-	visited_countries[get_country_index(country)] = true;
+	visited_countries->at(get_country_index(country)) = true;
 	for (auto const& c : *country->get_adjacent_countries())
 	{
 		//In this case, validate that the country is also within the continent.
-		if (c->get_continent()->get_name() == name_ && !visited_countries[get_country_index(c)])
+		if (c->get_continent()->get_name() == *name_ && !visited_countries->at(get_country_index(c)))
 		{
-			validate_continent(c, visited_countries);
+			depth_first_traversal(c, visited_countries);
 		}
 	}
+}
+
+	
+bool Continent::validate_continent() const
+{
+	vector<bool>* was_visited = new vector<bool>(countries_->size(), false);
+	depth_first_traversal(countries_->at(0), was_visited);
+
+	for(auto const& b : *was_visited)
+	{
+		if (!b)
+			return false;
+	}
+
+	return true;
 }
 
 void Continent::add_country(Country* country) const
@@ -110,20 +168,12 @@ bool Continent::already_added(Country* country) const
 	return false;
 }
 
-Country::Country(): 
-	name_(nullptr), 
-	continent_(nullptr), 
-	player_(nullptr), 
-	nb_armies_(nullptr)
-{
-	adjacent_countries_ = new vector<Country*>();
-}
-
-Country::Country(string name)
-{
-	name_ = new string(name);
-	adjacent_countries_ = new vector<Country*>();
-}
+Country::Country(string name, Continent* continent):
+	name_(new string(name)),
+	continent_(continent),
+	player_(nullptr),
+	nb_armies_(nullptr),
+	adjacent_countries_(new vector<Country*>()) {}
 
 
 string Country::get_name() const

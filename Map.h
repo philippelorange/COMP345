@@ -14,10 +14,14 @@ public:
 	Map();
 	Map(vector<Continent*>* continents, vector<Country*>* countries);
 
-	void depth_first_traversal(Country* country, bool* visited_countries) const;
+	bool validate_connected_graph() const;
+	bool validate_continent_singularity();
+
 private:
 	vector<Continent*>* continents_;
 	vector<Country*>* countries_;
+
+	void depth_first_traversal(Country* country, vector<bool>* visited_countries) const;
 	int get_country_index(Country* country) const;
 
 };
@@ -25,23 +29,24 @@ private:
 class Continent
 {
 public:
-	Continent();
 	Continent(string name);
 
 	//getters
-	string* get_name() const;
+	string get_name() const;
 	vector<Country*>* get_countries() const;
+	bool has_country(Country*);
 
 	//setters
 	void set_name(string* name);
-
-	void validate_continent(Country* country, bool* visited_countries) const;
 	void add_country(Country* country) const;
+
+	bool validate_continent() const;
 
 private:
 	string* name_;
 	vector<Country*>* countries_;
 
+	void depth_first_traversal(Country* country, vector<bool>* visited_countries) const;
 	int get_country_index(Country* country) const;
 	bool already_added(Country* country) const;
 };
@@ -49,8 +54,8 @@ private:
 class Country
 {
 public:
-	Country();
-	Country(string name);
+	Country(string name, Continent* continent);
+
 	//getters
 	string get_name() const;
 	Continent* get_continent() const;
