@@ -16,23 +16,35 @@ Map* MapLoader::read_map(string file_name) {
         exit(1);
     }
 
-    //Start reading the file, until we get to sections we can parse
+    //Start reading the file, until we get to sections we can parse. If the three sections aren't found
+    //and we are at the end of the file, return null;
     string cur_line;
+    bool has_parsed_continents = false;
+    bool has_parsed_countries = false;
+    bool has_parsed_borders = false;
+
     while(getline(*file_stream, cur_line)) {
-        if(cur_line == "[continents]\r") {
+        if(cur_line.find("[continents]") != std::string::npos) {
             parse_continents();
+            has_parsed_continents = true;
         }
 
-        if(cur_line == "[countries]\r") {
+        if(cur_line.find("[countries]") != std::string::npos) {
             parse_countries();
+            has_parsed_countries = true;
         }
 
-        if(cur_line == "[borders]\r") {
+        if(cur_line.find("[borders]") != std::string::npos) {
             parse_borders();
+            has_parsed_borders = true;
         }
     }
 
-    return create_map();
+    if(has_parsed_borders && has_parsed_continents && has_parsed_countries) {
+        return create_map();
+    } else {
+        return nullptr;
+    }
 }
 
 void MapLoader::parse_continents() {
@@ -56,7 +68,7 @@ void MapLoader::parse_continents() {
 
 void MapLoader::parse_countries() {
     string cur_line;
-    string parsed[5];
+    string parsed[5]; //A country will have 5 elements on a line: an ID, a name, a continent ID, and x,y coordinates.
     while(getline(*file_stream, cur_line)) {
         if (cur_line == "\r") {
             return;
@@ -68,7 +80,7 @@ void MapLoader::parse_countries() {
             i++;
         }
 
-        Continent* continent = continents->at(stoi(parsed[2]) - 1);
+        Continent* continent = continents->at(stoi(parsed[2]) - 1); //Find continent given an ID
         auto* c = new Country(parsed[1], continent);
         countries->push_back(c);
         continent->add_country(c);
@@ -87,6 +99,7 @@ void MapLoader::parse_borders() {
 
         Country* c;
 
+        //Add adjacent countries to the first country in the line, as long as the line still has values.
         if(string_stream >> border_index) {
             c = countries->at(stoi(border_index) - 1);
             while (string_stream >> border_index) {
