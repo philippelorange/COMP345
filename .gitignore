@@ -4,3 +4,7 @@
 
 /.vs/COMP345/v16
 /Debug
+/CMakeLists.txt
+/cmake-build-debug/
+.DS_Store
+.idea/

@@ -1,8 +1,8 @@
 ﻿#include "Map.h"
 
 Map::Map() :
-	continents_(new vector<Continent*>()),
-	countries_(new vector<Country*>()) {}
+        continents_(new vector<Continent*>()),
+        countries_(new vector<Country*>()) {}
 
 Map::Map(vector<Continent*>* continents, vector<Country*>* countries) :
 	continents_(continents),
@@ -10,7 +10,7 @@ Map::Map(vector<Continent*>* continents, vector<Country*>* countries) :
 
 bool Map::validate_connected_graph() const
 {
-	vector<bool>* was_visited = new vector<bool>(countries_->size(), false);
+	auto was_visited = new vector<bool>(countries_->size(), false);
 	depth_first_traversal(countries_->at(0), was_visited);
 
 	for (auto const& b : *was_visited)
@@ -123,7 +123,7 @@ void Continent::depth_first_traversal(Country* country, vector<bool>* visited_co
 	
 bool Continent::validate_continent() const
 {
-	vector<bool>* was_visited = new vector<bool>(countries_->size(), false);
+	auto* was_visited = new vector<bool>(countries_->size(), false);
 	depth_first_traversal(countries_->at(0), was_visited);
 
 	for(auto const& b : *was_visited)
