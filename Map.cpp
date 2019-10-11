@@ -1,8 +1,8 @@
 ﻿#include "Map.h"
 
 Map::Map() :
-	continents_(new vector<Continent*>()),
-	countries_(new vector<Country*>()) {}
+        continents_(new vector<Continent*>()),
+        countries_(new vector<Country*>()) {}
 
 Map::Map(vector<Continent*>* continents, vector<Country*>* countries) :
 	continents_(continents),
@@ -10,7 +10,10 @@ Map::Map(vector<Continent*>* continents, vector<Country*>* countries) :
 
 bool Map::validate_connected_graph() const
 {
-	vector<bool>* was_visited = new vector<bool>(countries_->size(), false);
+    //To validate the map is a connected graph, we must ensure that every country is visited. We create
+    //an array the size of the countries vector, and perform a DFT to navigate the graph. After all possible
+    //paths have been visited, we verify if all the elements of was_visited have been set to true;
+	auto was_visited = new vector<bool>(countries_->size(), false);
 	depth_first_traversal(countries_->at(0), was_visited);
 
 	for (auto const& b : *was_visited)
@@ -24,6 +27,8 @@ bool Map::validate_connected_graph() const
 
 bool Map::validate_continent_singularity()
 {
+    //Validates that a country belongs to a single continent by checking each continent for the country,
+    //and returning false if the country is found in a second continent or if it is not found in any continent.
 	for(auto const& country: *countries_)
 	{
 		bool found_continent = false;
@@ -57,7 +62,7 @@ void Map::depth_first_traversal(Country* country, vector<bool>* visited_countrie
 	{
 		if (!visited_countries->at(get_country_index(c))) //Do not visit countries that have already been visited.
 		{
-			depth_first_traversal(c, visited_countries);
+			depth_first_traversal(c, visited_countries); //Recursive function
 		}
 	}
 }
@@ -123,7 +128,7 @@ void Continent::depth_first_traversal(Country* country, vector<bool>* visited_co
 	
 bool Continent::validate_continent() const
 {
-	vector<bool>* was_visited = new vector<bool>(countries_->size(), false);
+	auto* was_visited = new vector<bool>(countries_->size(), false);
 	depth_first_traversal(countries_->at(0), was_visited);
 
 	for(auto const& b : *was_visited)

@@ -4,3 +4,5 @@
 
 /.vs/COMP345/v16
 /Debug
+.idea/
+cmake-build-debug/
