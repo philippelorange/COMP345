@@ -8,4 +8,4 @@ include_directories(.)
 add_executable(COMP345
         Map.cpp
         Map.h
-        MapDriver.cpp Cards/Cards.cpp Cards/Cards.h Cards/CardsDriver.cpp MapLoaderDriver.cpp MapLoader.h MapLoader.cpp)
+        MapDriver.cpp Cards/Cards.cpp Cards/Cards.h Cards/CardsDriver.cpp MapLoaderDriver.cpp MapLoader.h MapLoader.cpp Dice/Dice.cpp Dice/Dice.h Dice/DiceDriver.cpp)

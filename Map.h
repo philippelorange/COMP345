@@ -14,6 +14,7 @@ public:
 	Map();
 	Map(vector<Continent*>* continents, vector<Country*>* countries);
 
+    vector<Country*>* get_countries();
 	bool validate_connected_graph() const;
 	bool validate_continent_singularity();
 

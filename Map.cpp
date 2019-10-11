@@ -79,6 +79,10 @@ int Map::get_country_index(Country* country) const
 	return -1; //Didn't get any index...
 }
 
+vector<Country*>* Map::get_countries() {
+    return countries_;
+}
+
 Continent::Continent(string name) :
 	name_(new string(name)),
 	countries_(new vector<Country*>()) {}
