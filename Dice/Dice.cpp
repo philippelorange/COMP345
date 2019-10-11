@@ -27,9 +27,7 @@ void Dice::Roll(int n)
 		//print value
 		cout << *val1 << endl;
 		//push value into vector
-		history.push_back(*val1);
-		//sort whenever new value is added
-		sort(begin(history), end(history));
+		history.push_back(val1);
 
 		(*total_dice)++;
 	}
@@ -39,14 +37,18 @@ void Dice::Roll(int n)
 		int* val1 = new int(rand() % 6 + 1);
 		int* val2 = new int(rand() % 6 + 1);
 
+		if (*val1 > *val2) {
+			int* t = val2;
+			val2 = val1;
+			val1 = t;
+		}
+
 		cout << *val1 << ' ';
 		cout << *val2 << endl;
 
-		history.push_back(*val1);
-		history.push_back(*val2);
-		sort(begin(history), end(history));
+		history.push_back(val1);
+		history.push_back(val2);
 
-		//total_dice += 2;
 		(*total_dice) +=2;
 	}
 	else if (n == 3) {
@@ -55,16 +57,32 @@ void Dice::Roll(int n)
 		int* val2 = new int(rand() % 6 + 1);
 		int* val3 = new int(rand() % 6 + 1);
 
+		if (*val1 > *val2) {
+			int* t = val2;
+			val2 = val1;
+			val1 = t;
+		}
+
+		if (*val2 > *val3) {
+			int* t = val3;
+			val3 = val2;
+			val2 = t;
+		}
+
+		if (*val1 > *val2) {
+			int* t = val2;
+			val2 = val1;
+			val1 = t;
+		}
+
 		cout << *val1 << ' ';
 		cout << *val2 << ' ';
 		cout << *val3 << endl;
 
-		history.push_back(*val1);
-		history.push_back(*val2);
-		history.push_back(*val3);
-		sort(begin(history), end(history));
+		history.push_back(val1);
+		history.push_back(val2);
+		history.push_back(val3);
 
-		//total_dice += 3;
 		(*total_dice) +=3;
 	}
 	else {
@@ -78,8 +96,8 @@ void Dice::showHistory(int n)
 {
 	std::cout << "Dice " << n << " history: ";
 	//iterates over all elements in vector
-	for (std::vector<int>::const_iterator i = history.begin(); i != history.end(); ++i)
-		std::cout << *i << ' '; //prints all values in vector
+	for (int* i = new int(0); *i < history.size(); (*i)++)
+		std::cout << *history.at(*i) << ' '; //prints all values in vector
 	//newline for formatting
 	std::cout << endl;
 }
@@ -91,7 +109,7 @@ void Dice::showPercentage(int value)
 	double* counter = new double(0);
 	for (int* i = new int(0); *i < history.size(); (*i)++) {
 		//count number of times value we want to see shows up
-		if (history.at(*i) == value) {
+		if (*history.at(*i) == value) {
 			(*counter)++;
 		}
 	}

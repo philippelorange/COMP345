@@ -10,7 +10,8 @@ public:
 	int getTotalDice() { return *total_dice; };
 	void showHistory(int n);
 	void showPercentage(int value);
+	void sortAsc(int** p, int n);
 private:
 	int* total_dice;
-	std::vector<int> history;
+	std::vector<int*> history;
 };
