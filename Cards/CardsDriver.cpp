@@ -71,11 +71,13 @@ int main() {
     c5->add_adjacent_country(c7);
 
     c6->add_adjacent_country(c5);
-    c6->add_adjacent_country(c7); //Test case 2: Comment this out. (Breaks QC-North off of the rest of Quebec, forces you to pass by Maritimes, invalid)
+    c6->add_adjacent_country(
+            c7); //Test case 2: Comment this out. (Breaks QC-North off of the rest of Quebec, forces you to pass by Maritimes, invalid)
 
     c7->add_adjacent_country(c4);
     c7->add_adjacent_country(c5);
-    c7->add_adjacent_country(c6); //Test case 2: Comment this out. (Breaks QC-North off of the rest of Quebec, forces you to pass by Maritimes, invalid)
+    c7->add_adjacent_country(
+            c6); //Test case 2: Comment this out. (Breaks QC-North off of the rest of Quebec, forces you to pass by Maritimes, invalid)
     c7->add_adjacent_country(c8);
 
     c8->add_adjacent_country(c7);
