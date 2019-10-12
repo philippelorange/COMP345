@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
 
-	//variable initialization 
+	//variable initialization
 	Dice* dice1 = new Dice;
 	Dice* dice2 = new Dice;
 	int* num_dice = new int;
@@ -83,4 +83,4 @@ int main() {
 			cout << "Command not recognized, please try again" << endl;
 		}
 	}
-} 
+}

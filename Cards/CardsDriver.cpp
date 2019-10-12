@@ -1,6 +1,6 @@
 #include "Cards/Cards.h"
 #include <iostream>
-#include <Map.h>
+#include <Map/Map.h>
 
 int main() {
     //[continents]

@@ -6,3 +6,14 @@
 /Debug
 .idea/
 cmake-build-debug/
+.vs/
+
+x64/
+
+Dice/Project1.vcxproj.filters
+
+Dice/Project1.vcxproj.user
+
+Dice/Project1.vcxproj
+
+COMP345.vcxproj.filters

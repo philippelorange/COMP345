@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "Map.h"
+#include "Map/Map.h"
 
 using namespace std;
 
