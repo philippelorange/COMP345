@@ -1,7 +1,7 @@
 #include <iostream>
-#include "Player.h"
+#include "Player/Player.h"
 #include "Cards/Cards.h"
-#include "Map.h"
+#include "Map/Map.h"
 #include "Dice/Dice.h"
 #include <time.h>
 
@@ -27,7 +27,7 @@ int main() {
 
 	cout << "Creating cards.." << endl;
 
-	int nbr_cards = 42; // TODO: get number of cards from map instead of 42 (hardcoded)
+	int nbr_cards = 42;
 
 	while (nbr_cards % 3 != 0) { // get number divisible by 3 for purpose of this assignment
 		nbr_cards--;

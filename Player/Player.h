@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "Map.h"
+#include "Map/Map.h"
 #include "Cards/Cards.h"
 #include "Dice/Dice.h"
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include "MapLoader.h"
-#include "Map.h"
+#include "Map/Map.h"
 
 MapLoader::MapLoader() :
     continents(new vector<Continent*>()),
