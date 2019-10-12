@@ -1,17 +1,25 @@
 #pragma once
+
 #include <vector>
 
 //header class with all variables and functions
 class Dice {
 public:
-	Dice();
-	~Dice();
-	void Roll(int n);
-	int getTotalDice() { return *total_dice; };
-	void showHistory(int n);
-	void showPercentage(int value);
-	void sortAsc(int** p, int n);
+    Dice();
+
+    ~Dice();
+
+    void Roll(int n);
+
+    int getTotalDice() { return *total_dice; };
+
+    void showHistory(int n);
+
+    void showPercentage(int value);
+
+    void sortAsc(int** p, int n);
+
 private:
-	int* total_dice;
-	std::vector<int*> history;
+    int* total_dice;
+    std::vector<int*> history;
 };

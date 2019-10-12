@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Map/MapLoader/MapLoader.h"
 
-void validate(Map *pMap);
+void validate(Map* pMap);
 
 int main() {
     auto* loader = new MapLoader();
@@ -21,10 +21,10 @@ int main() {
     return 0;
 }
 
-void validate(Map *pMap) {
-    if(pMap == nullptr) {
+void validate(Map* pMap) {
+    if (pMap == nullptr) {
         cout << "Map has not been generated from MapLoader. The .map file is invalid." << endl;
-    } else if(!pMap->validate_connected_graph() || ! pMap->validate_continent_singularity()) {
+    } else if (!pMap->validate_connected_graph() || !pMap->validate_continent_singularity()) {
         cout << "Invalid map file; verify map is connected and countries belong to a single continent." << endl;
     } else {
         cout << "Valid map file!" << endl;
