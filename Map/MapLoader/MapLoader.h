@@ -7,20 +7,16 @@ using namespace std;
 
 class MapLoader {
 public:
-    MapLoader();
-
-    Map* read_map(string file_name);
+    Map* read_map(const string& file_name);
 
 private:
-    void parse_continents();
+    void parse_continents(vector<Continent*>* continents);
 
-    void parse_countries();
+    void parse_countries(vector<Continent*>* continents, vector<Country*>* countries);
 
-    void parse_borders();
+    void parse_borders(vector<Country*>* countries);
 
-    Map* create_map();
+    static Map* create_map(vector<Continent*>* continents, vector<Country*>* countries);
 
     ifstream* file_stream;
-    vector<Continent*>* continents;
-    vector<Country*>* countries;
 };

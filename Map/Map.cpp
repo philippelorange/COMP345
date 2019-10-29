@@ -8,6 +8,13 @@ Map::Map(vector<Continent*>* continents, vector<Country*>* countries) :
         continents_(continents),
         countries_(countries) {}
 
+void Map::set_name(string s) {
+    name = new string(s);
+}
+
+string Map::get_name() {
+    return *name;
+}
 bool Map::validate_connected_graph() const {
     //To validate the map is a connected graph, we must ensure that every country is visited. We create
     //an array the size of the countries vector, and perform a DFT to navigate the graph. After all possible

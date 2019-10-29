@@ -14,7 +14,6 @@ Player::Player() {
     this->dice_container = new vector<Dice*>;
     countries_owned_bonus = 3;
     continents_owned_bonus = 0;
-    std::cout << "A default player object was created" << std::endl;
 }
 
 Player::Player(std::string playername) {
@@ -25,7 +24,6 @@ Player::Player(std::string playername) {
     this->dice_container = new vector<Dice*>;
     countries_owned_bonus = 3;
     continents_owned_bonus = 0;
-    std::cout << "A default player object was created" << std::endl;
 }
 
 Player::~Player() {

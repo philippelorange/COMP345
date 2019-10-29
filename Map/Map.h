@@ -23,7 +23,12 @@ public:
 
     bool validate_continent_singularity();
 
+    void set_name(string s);
+
+    string get_name();
+
 private:
+    string* name;
     vector<Continent*>* continents_;
     vector<Country*>* countries_;
 

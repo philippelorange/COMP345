@@ -4,12 +4,12 @@
 #include "MapLoader.h"
 #include "Map/Map.h"
 
-MapLoader::MapLoader() :
-        continents(new vector<Continent*>()),
-        countries(new vector<Country*>()) {}
 
-Map* MapLoader::read_map(string file_name) {
+Map* MapLoader::read_map(const string& file_name) {
     file_stream = new ifstream(file_name);
+
+    auto* countries = new vector<Country*>();
+    auto* continents = new vector<Continent*>();
 
     if (!file_stream->is_open()) {
         cout << "The specified file cannot be opened." << endl;
@@ -25,29 +25,29 @@ Map* MapLoader::read_map(string file_name) {
 
     while (getline(*file_stream, cur_line)) {
         if (cur_line.find("[continents]") != std::string::npos) {
-            parse_continents();
+            parse_continents(continents);
             has_parsed_continents = true;
         }
 
         if (cur_line.find("[countries]") != std::string::npos) {
-            parse_countries();
+            parse_countries(continents, countries);
             has_parsed_countries = true;
         }
 
         if (cur_line.find("[borders]") != std::string::npos) {
-            parse_borders();
+            parse_borders(countries);
             has_parsed_borders = true;
         }
     }
 
     if (has_parsed_borders && has_parsed_continents && has_parsed_countries) {
-        return create_map();
+        return create_map(continents, countries);
     } else {
         return nullptr;
     }
 }
 
-void MapLoader::parse_continents() {
+void MapLoader::parse_continents(vector<Continent*>* continents) {
     string cur_line;
     string parsed[3];
     while (getline(*file_stream, cur_line)) {
@@ -66,7 +66,7 @@ void MapLoader::parse_continents() {
     }
 }
 
-void MapLoader::parse_countries() {
+void MapLoader::parse_countries(vector<Continent*>* continents, vector<Country*>* countries) {
     string cur_line;
     string parsed[5]; //A country will have 5 elements on a line: an ID, a name, a continent ID, and x,y coordinates.
     while (getline(*file_stream, cur_line)) {
@@ -87,7 +87,7 @@ void MapLoader::parse_countries() {
     }
 }
 
-void MapLoader::parse_borders() {
+void MapLoader::parse_borders(vector<Country*>* countries) {
     string cur_line;
     while (getline(*file_stream, cur_line)) {
         if (cur_line == "\r") {
@@ -109,6 +109,6 @@ void MapLoader::parse_borders() {
     }
 }
 
-Map* MapLoader::create_map() {
+Map* MapLoader::create_map(vector<Continent*>* continents, vector<Country*>* countries) {
     return new Map(continents, countries);
 }
