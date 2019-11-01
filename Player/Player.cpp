@@ -32,6 +32,7 @@ Player::~Player() {
 
 void Player::add_country(Country* new_country) {
     this->owned_countries->push_back(new_country);
+    new_country->set_player(this);
 }
 
 void Player::remove_country(std::string removed_country) {

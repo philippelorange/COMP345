@@ -80,7 +80,7 @@ public:
 
     vector<Country*>* get_adjacent_countries() const;
 
-    int* get_nb_armies() const;
+    int get_nb_armies() const;
 
     //setters
     void set_name(string name);
@@ -88,6 +88,8 @@ public:
     void set_continent(Continent* continent);
 
     void set_player(Player* player);
+
+    void add_army();
 
     void set_nb_armies(int* nb_armies);
 

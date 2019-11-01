@@ -1,5 +1,7 @@
 #include <iostream>
 #include <filesystem>
+#include <algorithm>
+#include <random>
 
 #include "GameEngine.h"
 #include "Map/Map.h"
@@ -11,10 +13,21 @@ using namespace std;
 namespace fs = std::filesystem;
 
 void Game::start() {
+    game_setup();
+    startup_phase();
+}
+
+void Game::game_setup() {
     print_intro();
     select_map();
     create_players();
     create_deck();
+}
+
+void Game::startup_phase() {
+    determine_order();
+    assign_countries();
+    place_armies();
 }
 
 void Game::print_intro() {
@@ -32,6 +45,8 @@ void Game::select_map() {
     vector<Map*> valid_files;
     vector<string> invalid_files;
 
+    //The following block will find all files ending with .map, and split up the valid from the invalid ones,
+    //for the user only to be able to select a valid file.
     auto* mapLoader = new MapLoader();
     for(auto& p: std::filesystem::directory_iterator("../Map/Maps")) {
         if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
@@ -60,7 +75,9 @@ void Game::select_map() {
         }
 
         cin >> user_choice;
-        if(user_choice < 1 || user_choice > valid_files.size()) {
+        if(cin.fail() || user_choice < 1 || user_choice > valid_files.size()) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             cout << "Invalid input." << endl;
         }
     }
@@ -73,7 +90,9 @@ void Game::create_players() {
     while(nb_players < 2 || nb_players > 6) {
         cout << "How many players want to play?" << endl;
         cin >> nb_players;
-        if(nb_players > 6 || nb_players < 2) {
+        if(cin.fail() || nb_players > 6 || nb_players < 2) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             cout << "Invalid number of players." << endl;
         }
     }
@@ -81,9 +100,25 @@ void Game::create_players() {
     _players = new vector<Player*>();
 
     for(int i=0; i<nb_players; i++) {
-        cout << "Enter name for player #" << i+1 << ":" << endl;
         string name;
-        cin >> name;
+        bool valid_name = false;
+        while(!valid_name) {
+            cout << "Enter name for player #" << i+1 << ":" << endl;
+            cin >> name;
+            if(i==0) {
+                valid_name = true; //For the first player, no need to check for other players having the same name
+            } else {
+                for (auto &p : *_players) {
+                    if (p->get_player_name() == name) {
+                        cout << "Another player already has this name!" << endl;
+                        valid_name = false;
+                        break;
+                    } else {
+                        valid_name = true;
+                    }
+                }
+            }
+        }
         _players->push_back(new Player(name));
     }
 }
@@ -100,6 +135,79 @@ void Game::create_deck() {
     }
 
     _deck = new Deck(cards);
+}
+
+void Game::determine_order() {
+    std::random_device rd;
+    auto re = default_random_engine(rd());
+    //Use the std library to shuffle the player array
+    std::shuffle(std::begin(*_players), end(*_players), re);
+    cout << "Order of play has been determined: " << endl;
+    for(auto& p : *_players) {
+        cout << "\t -" << p->get_player_name() << endl;
+    }
+}
+
+void Game::assign_countries() {
+    cout << "Now assigning random countries in a round-robin fashion:" << endl;
+
+    //Create a vector of integers representing each country's index in the vector. We
+    //will shuffle this index vector to randomly assign countries to each player.
+    vector<int> country_indexes(_selected_map->get_countries()->size());
+
+    std::iota (std::begin(country_indexes), std::end(country_indexes), 0);
+
+    std::random_device rd;
+    auto re = default_random_engine(rd());
+    std::shuffle(std::begin(country_indexes), end(country_indexes), re);
+
+    for(int i=0; i<_selected_map->get_countries()->size(); i++) {
+        _players->at(i%_players->size())->add_country(_selected_map->get_countries()->at(country_indexes.at(i)));
+    }
+
+    cout << "Countries have been assigned! Here is the outcome: " << endl;
+    for(auto& p : *_players) {
+        cout << "\t- " << p->get_player_name() << ": " << endl;
+        for(auto& c : *p->get_player_owned_countries()) {
+            cout << "\t \t * " << c->get_name() << endl;
+        }
+    }
+}
+
+void Game::place_armies() {
+    cout << "Time to place the armies!" << endl;
+
+    int nb_armies = 0;
+
+    switch(_players->size()) {
+        case 2 : nb_armies = 25; break;
+        case 3 : nb_armies = 20; break;
+        case 4 : nb_armies = 15; break;
+        case 5 : nb_armies = 10; break;
+        case 6 : nb_armies = 5; break;
+    }
+
+    //loop until the number of armies left is 0
+    for(int i=0; i<nb_armies; i++) {
+        for(auto & p : *_players) {
+            int selection = -1;
+            while(selection < 1 || selection > p->get_player_owned_countries()->size()) {
+                cout << "\t" << p->get_player_name() << ", please place an army. You have " << (nb_armies - i)
+                     << " left" << endl;
+                for (int k = 0; k < p->get_player_owned_countries()->size(); k++) {
+                    cout << "\t \t (" << (k + 1) << ") " << p->get_player_owned_countries()->at(k)->get_name() << endl;
+                }
+
+                cin >> selection;
+                if (cin.fail() || selection < 1 || selection > p->get_player_owned_countries()->size()) {
+                    cin.clear();
+                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    cout << "Invalid input." << endl;
+                }
+            }
+            p->get_player_owned_countries()->at(selection-1)->add_army();
+        }
+    }
 }
 
 Map* Game::get_map() {

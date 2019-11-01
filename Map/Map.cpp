@@ -156,7 +156,7 @@ Country::Country(string name, Continent* continent) :
         name_(new string(name)),
         continent_(continent),
         player_(nullptr),
-        nb_armies_(nullptr),
+        nb_armies_(new int),
         adjacent_countries_(new vector<Country*>()) {}
 
 
@@ -176,8 +176,8 @@ vector<Country*>* Country::get_adjacent_countries() const {
     return adjacent_countries_;
 }
 
-int* Country::get_nb_armies() const {
-    return nb_armies_;
+int Country::get_nb_armies() const {
+    return *nb_armies_;
 }
 
 void Country::set_name(string name) {
@@ -190,6 +190,10 @@ void Country::set_continent(Continent* continent) {
 
 void Country::set_player(Player* player) {
     player_ = player;
+}
+
+void Country::add_army() {
+    (*nb_armies_)++;
 }
 
 void Country::set_nb_armies(int* nb_armies) {
