@@ -15,6 +15,7 @@ namespace fs = std::filesystem;
 void Game::start() {
     game_setup();
     startup_phase();
+    game_loop();
 }
 
 void Game::game_setup() {
@@ -28,6 +29,36 @@ void Game::startup_phase() {
     determine_order();
     assign_countries();
     place_armies();
+}
+
+void Game::game_loop() {
+    cout << "*** Time to play Risk! ***" << endl << endl;
+
+    bool game_over = false;
+    while(!game_over) {
+        for (auto & _player : *_players) {
+            cout << _player->get_player_name() << ", it's your turn to play." << endl;
+            reinforcements_phase(_player);
+            attack_phase(_player);
+            fortification_phase(_player);
+            if(has_victory()) {
+                game_over = true;
+                break;
+            }
+        }
+    }
+
+    cout << "*** The game is over! ***" << endl;
+    cout << "The champion is: " << _selected_map->get_countries()->at(0)->get_player()->get_player_name() << "!!!" << endl;
+}
+
+void Game::setup_winning_game() {
+    game_setup();
+    startup_phase();
+    for(auto& c : *_selected_map->get_countries()) {
+        c->set_player(_players->at(0));
+    }
+    game_loop();
 }
 
 void Game::print_intro() {
@@ -180,11 +211,11 @@ void Game::place_armies() {
     int nb_armies = 0;
 
     switch(_players->size()) {
-        case 2 : nb_armies = 25; break;
-        case 3 : nb_armies = 20; break;
-        case 4 : nb_armies = 15; break;
-        case 5 : nb_armies = 10; break;
-        case 6 : nb_armies = 5; break;
+        case 2 : nb_armies = 40; break;
+        case 3 : nb_armies = 35; break;
+        case 4 : nb_armies = 30; break;
+        case 5 : nb_armies = 25; break;
+        case 6 : nb_armies = 20; break;
     }
 
     //loop until the number of armies left is 0
@@ -208,6 +239,37 @@ void Game::place_armies() {
             p->get_player_owned_countries()->at(selection-1)->add_army();
         }
     }
+}
+
+void Game::reinforcements_phase(Player* p) {
+    cout << "\t*** " << p->get_player_name() << "'s Reinforcements phase" << endl;
+    string t;
+    cin >> t;
+}
+
+void Game::attack_phase(Player* p){
+    cout << "\t*** " << p->get_player_name() << "'s Attack phase" << endl;
+    string t;
+    cin >> t;
+}
+
+void Game::fortification_phase(Player* p){
+    cout << "\t*** " << p->get_player_name() << "'s Fortification phase" << endl;
+    string t;
+    cin >> t;
+}
+
+Player* Game::has_victory() {
+    Player* p = _selected_map->get_countries()->at(0)->get_player();
+    for (auto& c : *_selected_map->get_countries()) {
+        if(!(c->get_player()->get_player_name() == p->get_player_name())) {
+            return nullptr;
+        }
+
+        return p;
+    }
+
+
 }
 
 Map* Game::get_map() {
