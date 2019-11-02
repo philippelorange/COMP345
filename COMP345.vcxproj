@@ -127,15 +127,12 @@
   <ItemGroup>
     <ClInclude Include="Cards\Cards.h" />
     <ClInclude Include="Dice\Dice.h" />
+    <ClInclude Include="GameEngine\GameEngine.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Cards\Cards.cpp" />
-    <ClCompile Include="Dice\Dice.cpp" />
-    <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Player_driver.cpp" />
+    <ClCompile Include="GameEngine\GameEngine.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
