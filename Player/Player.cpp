@@ -130,23 +130,39 @@ void Player::fortify() {
                             for (auto& owned_country : *owned_countries) {
                                 if (owned_country->get_name() == source_country) {
                                     source_country_ptr = owned_country;
+                                    cout << "Armies in:" << source_country << " : "
+                                         << owned_country->get_nb_armies() << endl;
                                 }
                                 if (owned_country->get_name() == target_country) {
+                                    cout << "Armies in:" << target_country << " : "
+                                         << owned_country->get_nb_armies() << endl;
                                     target_country_ptr = owned_country;
                                 }
                             }
 
-                            if (nbr_of_armies_moved > 0 && nbr_of_armies_moved < target_country_ptr->get_nb_armies()) {
+                            if (nbr_of_armies_moved > 0 && nbr_of_armies_moved < source_country_ptr->get_nb_armies()) {
                                 source_country_ptr->set_nb_armies(
                                         new int(source_country_ptr->get_nb_armies() - nbr_of_armies_moved));
                                 target_country_ptr->set_nb_armies(
                                         new int(target_country_ptr->get_nb_armies() + nbr_of_armies_moved));
+
+                                cout << "There is now " << source_country_ptr->get_nb_armies() << " armies in "
+                                     << source_country_ptr->get_name() << endl;
+
+                                cout << "There is now " << target_country_ptr->get_nb_armies() << "armies in "
+                                     << target_country_ptr->get_name();
+                                break;
                             } else {
                                 cout << "Invalid number of armies ! Retry." << endl;
-                                continue;
+                                cout << "Do you wish to exit ? (yes/no)" << endl;
+                                string wish_to_exit;
+                                cin >> wish_to_exit;
+                                if (wish_to_exit == "yes") {
+                                    break;
+                                } else {
+                                    continue;
+                                }
                             }
-
-                            break;
                         }
 
                     } else {

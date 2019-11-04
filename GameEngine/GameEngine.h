@@ -15,6 +15,13 @@ public:
     //Methods only used for runner
     void setup_winning_game();
 
+    //Startup Phase
+    void determine_order();
+
+    void assign_countries();
+
+    void place_armies();
+
     Map* get_map();
 
     vector<Player*>* get_players();
@@ -30,13 +37,6 @@ private:
     void create_players();
 
     void create_deck();
-
-    //Startup Phase
-    void determine_order();
-
-    void assign_countries();
-
-    void place_armies();
 
     //Main Game loop
     void reinforcements_phase(Player* p);
