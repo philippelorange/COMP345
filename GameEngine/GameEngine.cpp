@@ -248,9 +248,31 @@ void Game::reinforcements_phase(Player* p) {
 }
 
 void Game::attack_phase(Player* p){
-    cout << "\t*** " << p->get_player_name() << "'s Attack phase" << endl;
-    string t;
-    cin >> t;
+	string player_name = p->get_player_name();
+    cout << "\t*** " << player_name << "'s Attack phase" << endl;
+	string answer;
+	bool player_wants_to_attack = true;
+	cout << "\t*** " << player_name << ", do you want to attack? (y/n)" << endl;
+	cin >> answer;
+	if (answer.compare("y") == 0)
+		player_wants_to_attack = true;
+	else
+		player_wants_to_attack = false;
+	
+
+	while (player_wants_to_attack) {
+		p->attack();
+		//perhaps make a check to see if any attack is possible
+		do {
+			cout << "\t*** " << player_name << ", do you still want to attack? (y/n)" << endl;
+			cin >> answer;
+		} while (!(answer.compare("y")==0|| answer.compare("n")==0));
+		if(answer.compare("y") == 0))
+			player_wants_to_attack = true;
+		else
+			player_wants_to_attack = false;
+	};
+	cout << "\t*** " << player_name << "'s Attack phase is over." << endl;
 }
 
 void Game::fortification_phase(Player* p){

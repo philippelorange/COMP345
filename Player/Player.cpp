@@ -64,7 +64,95 @@ void Player::reinforce() {
 }
 
 void Player::attack() {
-    cout << "the method attack has been called by " << this->get_player_name() << std::endl;
+    //TO do: validation loops should probably be in separate methods
+	Country* attack_source = nullptr;
+	Country* attack_target = nullptr;
+	vector<Country*>* playersCountries = this->get_player_owned_countries();
+	vector<Country*> valid_source;
+
+	cout <<this->get_player_name()<<", please select a country to attack from among the following countries:"<<endl;
+	for (Country* country_pointer: *playersCountries) {
+		if (country_pointer->get_nb_armies > 0) {
+			valid_source.push_back(country_pointer);
+			cout << country_pointer->get_name() << endl;
+		}
+	}
+	//get the source of the attack
+	string players_choice_source = "";
+	bool attack_source_valid = false;
+	do{
+		cin >> players_choice_source;
+		for (Country* country_pointer : valid_source) {
+			if ((country_pointer->get_name()).compare(players_choice_source) == 0) {
+				attack_source_valid = true;
+				attack_source = country_pointer;
+			}
+		}
+	} while (!attack_source_valid);
+	//get the target of the attack
+	cout << this->get_player_name() << ", please select a country to attack from " << players_choice_source<<" among the following countries:" <<endl;
+	vector<Country*> valid_target;
+	for (Country* country_pointer :*(attack_source->get_adjacent_countries())) {
+		if (country_pointer->get_player() == this) {
+			valid_target.push_back(country_pointer);
+			cout << country_pointer->get_name() << endl;
+		}
+	}
+	string players_choice_target = "";
+	bool attack_target_valid = false;
+	do {
+		cin >> players_choice_target;
+		for (Country* country_pointer : *playersCountries) {
+			if ((country_pointer->get_name()).compare(players_choice_target) == 0) {
+				attack_target_valid = true;
+				attack_target = country_pointer;
+			}
+		}
+	} while (!attack_target_valid);
+	
+	//Now the battle loop
+	bool player_wishes_to_attack = true;
+	bool battle_is_over = false;
+	string answer;
+
+	int armies_in_attacking_country;
+	int max_number_of_dices_attack;
+	int number_of_dices_attack;
+	int armies_in_defending_country;
+	int max_number_of_dices_defense;
+	int number_of_dices_defense;
+
+	while (player_wishes_to_attack && (!battle_is_over)) {
+
+		armies_in_attacking_country = attack_source->get_nb_armies();
+		max_number_of_dices_attack = (armies_in_attacking_country<=4)? armies_in_attacking_country -1:3;
+		armies_in_defending_country = attack_target->get_nb_armies();
+		max_number_of_dices_defense = (armies_in_defending_country <= 2) ? armies_in_defending_country : 2;
+
+		do {
+			cout << "How many dices do you want to attack with? (between 1 and " << max_number_of_dices_attack << ")" << endl;
+			cin >> number_of_dices_attack;
+		} while (!(number_of_dices_attack > 0 && number_of_dices_attack <= max_number_of_dices_attack));
+		do {
+			cout << "How many dices does " << attack_target ->get_player()->get_player_name()<<" want to to defend with? (between 1 and " << max_number_of_dices_defense << ")" << endl;
+			cin >> number_of_dices_defense;
+		} while (!(number_of_dices_defense > 0 && number_of_dices_attack <= max_number_of_dices_defense));
+
+		/*
+			Here goes the logic for battle, pairwise comparison of dices and updating of troops and potential transfer of ownership of embattled country
+		
+		*/
+		if (!battle_is_over) {
+			do {
+				cout << this->get_player_name() << " do you wish to continue the attack? (y/n)" << endl;
+				cin >> answer;
+			} while (!(answer.compare("y") == 0 || answer.compare("n") == 0));
+			if (answer.compare("y") == 0)
+				player_wishes_to_attack = true;
+			else
+				player_wishes_to_attack = false;
+		}
+	}
 }
 
 void Player::fortify() {
