@@ -77,9 +77,10 @@ vector<Country*>* Map::get_countries() {
     return countries_;
 }
 
-Continent::Continent(string name) :
+Continent::Continent(string name, int control_value) :
         name_(new string(name)),
-        countries_(new vector<Country*>()) {}
+        countries_(new vector<Country*>()),
+        control_value_(new int(control_value)){}
 
 
 string Continent::get_name() const {
@@ -88,6 +89,10 @@ string Continent::get_name() const {
 
 vector<Country*>* Continent::get_countries() const {
     return countries_;
+}
+
+int Continent::get_control_value() const {
+    return *control_value_;
 }
 
 bool Continent::has_country(Country* c) {
