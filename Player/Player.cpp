@@ -10,6 +10,7 @@
 Player::Player() {
     player_name = "Default";
     this->hand = new Hand();
+	this->deck = new Deck();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
@@ -61,7 +62,40 @@ void Player::draw(Deck* deck) {
 }
 
 void Player::reinforce() {
-    cout << "the method reinforce has been called by " << this->get_player_name() << std::endl;
+	//#countries owned/3 (rounded down)
+	int* num_armies = new int(floor(this->get_player_owned_countries()->size() / 3));
+
+	//add num of continents owned (continent control value)
+	*num_armies += this->owned_continents->size();
+
+	//exchange if more than 5 cards
+	if (this->hand->get_hand_cards()->size() > 5) {
+		this->hand->exchange(this->deck);
+	}
+	//if armies is less than 3, set to 3
+	if (*num_armies < 3) {
+		*num_armies = 3;
+	}
+
+	//place armies at desired countries
+	for (int i = 0; i < *num_armies; i++) {
+		int selection = -1;
+		while (selection < 1 || selection > this->get_player_owned_countries()->size()) {
+			cout << "\t" << this->get_player_name() << ", please place an army. You have " << (*num_armies - i)
+				<< " left" << endl;
+			for (int k = 0; k < this->get_player_owned_countries()->size(); k++) {
+				cout << "\t \t (" << (k + 1) << ") " << this->get_player_owned_countries()->at(k)->get_name() << endl;
+			}
+
+			cin >> selection;
+			if (cin.fail() || selection < 1 || selection > this->get_player_owned_countries()->size()) {
+				cin.clear();
+				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				cout << "Invalid input." << endl;
+			}
+			this->get_player_owned_countries()->at(selection - 1)->add_army();
+		}
+	}
 }
 
 void Player::attack() {

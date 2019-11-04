@@ -46,7 +46,7 @@ void Deck::draw(Hand* hand) {
         return;
     }
 
-    int random_number = (int) random() % this->deck_cards_->size(); // get random number from size of cards
+    int random_number = (int) rand() % this->deck_cards_->size(); // get random number from size of cards
     hand->get_hand_cards()->push_back((*deck_cards_)[random_number]); // add card to hand
     this->deck_cards_->erase(this->deck_cards_->begin() + random_number);
 }

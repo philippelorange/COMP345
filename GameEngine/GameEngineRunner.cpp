@@ -55,7 +55,7 @@ int main() {
     game->setup_winning_game();
     */
 
-    /*
+    /**/
     game = new Game();
     game->game_setup();
     game->startup_phase();
