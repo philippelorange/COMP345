@@ -193,11 +193,12 @@ void Country::set_player(Player* player) {
 }
 
 void Country::add_army() {
-    (*nb_armies_)++;
+    nb_armies_++;
 }
 
-void Country::set_nb_armies(int* nb_armies) {
-    nb_armies_ = nb_armies;
+void Country::set_nb_armies(int new_nb_armies) {
+	delete nb_armies_;
+    *nb_armies_ = new_nb_armies;
 }
 
 void Country::add_adjacent_country(Country* country) const {

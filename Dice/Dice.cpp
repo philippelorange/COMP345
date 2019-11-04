@@ -115,7 +115,7 @@ void Dice::showPercentage(int value) {
         //prints percentages
         cout << "The number " << value << " rolled " << (*counter) / (*num_rolls) * 100 << "% of times" << endl;
     }
-	int* sortDsc(int n) {
+	static int* Dice::sortDsc(int n) {
 		static int  sorted_dices[n];
 		if (n == 1) {
 			//pointer with value of random from 1-6

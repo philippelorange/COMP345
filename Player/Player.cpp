@@ -67,11 +67,12 @@ void Player::attack() {
     //TO do: validation loops should probably be in separate methods
 	Country* attack_source = nullptr;
 	Country* attack_target = nullptr;
-	vector<Country*>* playersCountries = this->get_player_owned_countries();
+	vector<Country*>* attacking_player_s_contries = this->get_player_owned_countries();
 	vector<Country*> valid_source;
+	Player* defending_player;
 
 	cout <<this->get_player_name()<<", please select a country to attack from among the following countries:"<<endl;
-	for (Country* country_pointer: *playersCountries) {
+	for (Country* country_pointer: *attacking_player_s_contries) {
 		if (country_pointer->get_nb_armies > 0) {
 			valid_source.push_back(country_pointer);
 			cout << country_pointer->get_name() << endl;
@@ -102,13 +103,14 @@ void Player::attack() {
 	bool attack_target_valid = false;
 	do {
 		cin >> players_choice_target;
-		for (Country* country_pointer : *playersCountries) {
+		for (Country* country_pointer : *attacking_player_s_contries) {
 			if ((country_pointer->get_name()).compare(players_choice_target) == 0) {
 				attack_target_valid = true;
 				attack_target = country_pointer;
 			}
 		}
 	} while (!attack_target_valid);
+	defending_player = attack_target->get_player();
 	
 	//Now the battle loop
 	bool player_wishes_to_attack = true;
@@ -116,18 +118,16 @@ void Player::attack() {
 	bool attacker_won = false;
 	string answer;
 
-	int armies_in_attacking_country;
+	int armies_in_attacking_country = attack_source->get_nb_armies();
 	int max_number_of_dices_attack;
 	int number_of_dices_attack;
-	int armies_in_defending_country;
+	int armies_in_defending_country = attack_target->get_nb_armies();
 	int max_number_of_dices_defense;
 	int number_of_dices_defense;
 
 	while (player_wishes_to_attack && (!battle_is_over)) {
 
-		armies_in_attacking_country = attack_source->get_nb_armies();
 		max_number_of_dices_attack = (armies_in_attacking_country<=4)? armies_in_attacking_country -1:3;
-		armies_in_defending_country = attack_target->get_nb_armies();
 		max_number_of_dices_defense = (armies_in_defending_country <= 2) ? armies_in_defending_country : 2;
 
 		do {
@@ -135,7 +135,7 @@ void Player::attack() {
 			cin >> number_of_dices_attack;
 		} while (!(number_of_dices_attack > 0 && number_of_dices_attack <= max_number_of_dices_attack));
 		do {
-			cout << "How many dices does " << attack_target ->get_player()->get_player_name()<<" want to to defend with? (between 1 and " << max_number_of_dices_defense << ")" << endl;
+			cout << "How many dices does " << defending_player->get_player_name()<<" want to to defend with? (between 1 and " << max_number_of_dices_defense << ")" << endl;
 			cin >> number_of_dices_defense;
 		} while (!(number_of_dices_defense > 0 && number_of_dices_attack <= max_number_of_dices_defense));
 
@@ -143,6 +143,24 @@ void Player::attack() {
 			Here goes the logic for battle, pairwise comparison of dices and updating of troops and potential transfer of ownership of embattled country
 		
 		*/
+		int number_of_comparisons = (number_of_dices_attack <= number_of_dices_defense) ? number_of_dices_attack : number_of_dices_defense;
+		int* attacker_rolls = Dice::sortDsc(number_of_dices_attack);
+		int* defender_rolls = Dice::sortDsc(number_of_dices_defense);
+		
+		for (int i = 0; i < number_of_comparisons; i++) {
+			if (attacker_rolls[i] > defender_rolls[i])
+				armies_in_defending_country--;
+			else
+				armies_in_attacking_country--;
+		}
+		if (armies_in_attacking_country == 1)
+			battle_is_over = true;
+		
+		if (armies_in_defending_country == 0) {
+			battle_is_over = true;
+			attacker_won = true;
+		}
+		
 		if (!battle_is_over) {
 			do {
 				cout << this->get_player_name() << " do you wish to continue the attack? (y/n)" << endl;
@@ -154,6 +172,21 @@ void Player::attack() {
 				player_wishes_to_attack = false;
 		}
 	}
+	attack_source->set_nb_armies(armies_in_attacking_country);
+	attack_target->set_nb_armies(armies_in_defending_country);
+	if (attacker_won) {
+		this->add_country(attack_target);
+		defending_player->remove_country(attack_target->get_name());
+		cout<<this->get_player_name()<<" has conquered "<< attack_target->get_name()<<endl; 
+		cout<< this->get_player_name() <<" , select the number of troups you want to move to "<<attack_target->get_name()<<"(between 1 and "<< armies_in_attacking_country-1 <<")"<<endl;
+		int armies_moved_to_conquered_country;
+		do {
+			cin >> armies_moved_to_conquered_country;
+		} while (!(armies_moved_to_conquered_country > 0 && armies_moved_to_conquered_country < armies_in_attacking_country - 1));
+		attack_source->set_nb_armies((attack_source->get_nb_armies()) - armies_moved_to_conquered_country);
+		attack_target->set_nb_armies(armies_moved_to_conquered_country);
+	}
+	return;
 }
 
 void Player::fortify() {

@@ -91,7 +91,7 @@ public:
 
     void add_army();
 
-    void set_nb_armies(int* nb_armies);
+    void set_nb_armies(int nb_armies);
 
     void add_adjacent_country(Country* country) const;
 

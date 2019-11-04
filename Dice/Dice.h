@@ -19,7 +19,7 @@ public:
 
     int* sortAsc(int** p, int n);
 
-	int* sortDsc(int n);
+	static int* sortDsc(int n);
 
 
 private:
