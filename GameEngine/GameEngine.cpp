@@ -194,6 +194,7 @@ void Game::assign_countries() {
 
     for(int i=0; i<_selected_map->get_countries()->size(); i++) {
         _players->at(i%_players->size())->add_country(_selected_map->get_countries()->at(country_indexes.at(i)));
+        _selected_map->get_countries()->at(country_indexes.at(i))->add_army();
     }
 
     cout << "Countries have been assigned! Here is the outcome: " << endl;
@@ -251,27 +252,27 @@ void Game::attack_phase(Player* p){
 	string player_name = p->get_player_name();
     cout << "\t*** " << player_name << "'s Attack phase" << endl;
 	string answer;
-	bool player_wants_to_attack = true;
-	cout << "\t*** " << player_name << ", do you want to attack? (y/n)" << endl;
-	cin >> answer;
-	if (answer.compare("y") == 0)
-		player_wants_to_attack = true;
-	else
-		player_wants_to_attack = false;
-	
+	bool player_wants_to_attack;
+    do {
+        cout << "\t*** " << player_name << ", do you want to attack? (y/n)" << endl;
+        cin >> answer;
+    } while (!(answer == "y" || answer == "n"));
+    if(answer == "y")
+        player_wants_to_attack = true;
+    else
+        player_wants_to_attack = false;
 
 	while (player_wants_to_attack) {
 		p->attack();
-		//perhaps make a check to see if any attack is possible
 		do {
-			cout << "\t*** " << player_name << ", do you still want to attack? (y/n)" << endl;
+			cout << "\t*** " << player_name << ", would you like to initiate another attack? (y/n)" << endl;
 			cin >> answer;
-		} while (!(answer.compare("y")==0|| answer.compare("n")==0));
-		if(answer.compare("y") == 0)
+		} while (!(answer == "y" || answer == "n"));
+		if(answer == "y")
 			player_wants_to_attack = true;
 		else
 			player_wants_to_attack = false;
-	};
+	}
 	cout << "\t*** " << player_name << "'s Attack phase is over." << endl;
 }
 
@@ -284,14 +285,12 @@ void Game::fortification_phase(Player* p){
 Player* Game::has_victory() {
     Player* p = _selected_map->get_countries()->at(0)->get_player();
     for (auto& c : *_selected_map->get_countries()) {
-        if(!(c->get_player()->get_player_name() == p->get_player_name())) {
+        if(c->get_player()->get_player_name() != p->get_player_name()) {
             return nullptr;
         }
-
-        return p;
     }
 
-
+    return p;
 }
 
 Map* Game::get_map() {

@@ -18,12 +18,12 @@ int main() {
         cout << "\t -" << p->get_player_name() << endl;
     }
     cout << "Number of cards in the deck: " << game->get_deck()->get_deck_cards()->size() << endl;
-    */
 
+*/
     //<----------------------------------------------------------------------------------------------------------------->
     //<----------------------------------------------------------------------------------------------------------------->
 
-    /*
+/*
     Game* game = new Game();
     game->game_setup();
     game->startup_phase();
@@ -44,7 +44,7 @@ int main() {
             cout << "\t \t * " << c->get_name() << ", number of armies: " << c->get_nb_armies() << endl;
     }
     cout << endl << "Number of cards in the deck: " << game->get_deck()->get_deck_cards()->size() << endl;
-    */
+*/
 
     //<----------------------------------------------------------------------------------------------------------------->
     //<----------------------------------------------------------------------------------------------------------------->
@@ -54,10 +54,10 @@ int main() {
     game->setup_winning_game();
     */
 
-    /*
-    game = new Game();
+
+    Game* game = new Game();
     game->game_setup();
     game->startup_phase();
     game->game_loop();
-    */
+
 }

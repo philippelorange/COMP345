@@ -156,7 +156,7 @@ Country::Country(string name, Continent* continent) :
         name_(new string(name)),
         continent_(continent),
         player_(nullptr),
-        nb_armies_(new int),
+        nb_armies_(new int(0)),
         adjacent_countries_(new vector<Country*>()) {}
 
 
@@ -193,11 +193,10 @@ void Country::set_player(Player* player) {
 }
 
 void Country::add_army() {
-    nb_armies_++;
+    (*nb_armies_)++;
 }
 
 void Country::set_nb_armies(int new_nb_armies) {
-	delete nb_armies_;
     *nb_armies_ = new_nb_armies;
 }
 

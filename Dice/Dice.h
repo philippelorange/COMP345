@@ -2,6 +2,7 @@
 
 #include <vector>
 
+using namespace std;
 //header class with all variables and functions
 class Dice {
 public:
@@ -19,7 +20,7 @@ public:
 
     int* sortAsc(int** p, int n);
 
-	static int* sortDsc(int n);
+	static vector<int>* sortDsc(int n);
 
 
 private:
