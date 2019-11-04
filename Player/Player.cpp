@@ -213,9 +213,9 @@ void Player::attack() {
 		} while (!(armies_moved_to_conquered_country > 0 && armies_moved_to_conquered_country < armies_in_attacking_country));
 		attack_source->set_nb_armies((attack_source->get_nb_armies()) - armies_moved_to_conquered_country);
 		attack_target->set_nb_armies(armies_moved_to_conquered_country);
-
-		cout << "*** Battle is over ***" << endl;
 	}
+
+    cout << "*** Battle is over ***" << endl;1
 }
 
 void Player::fortify() {
