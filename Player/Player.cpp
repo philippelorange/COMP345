@@ -113,6 +113,7 @@ void Player::attack() {
 	//Now the battle loop
 	bool player_wishes_to_attack = true;
 	bool battle_is_over = false;
+	bool attacker_won = false;
 	string answer;
 
 	int armies_in_attacking_country;

@@ -17,7 +17,10 @@ public:
 
     void showPercentage(int value);
 
-    void sortAsc(int** p, int n);
+    int* sortAsc(int** p, int n);
+
+	int* sortDsc(int n);
+
 
 private:
     int* total_dice;
