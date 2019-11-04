@@ -72,6 +72,8 @@ private:
 
 class Country {
 public:
+    Country();
+
     Country(string name, Continent* continent);
 
     //getters

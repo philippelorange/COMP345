@@ -266,8 +266,7 @@ void Game::attack_phase(Player* p) {
 
 void Game::fortification_phase(Player* p) {
     cout << "\t*** " << p->get_player_name() << "'s Fortification phase" << endl;
-    string t;
-    cin >> t;
+    p->fortify();
 }
 
 Player* Game::has_victory() {
