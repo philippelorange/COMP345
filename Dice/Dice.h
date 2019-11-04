@@ -2,6 +2,7 @@
 
 #include <vector>
 
+using namespace std;
 //header class with all variables and functions
 class Dice {
 public:
@@ -17,7 +18,10 @@ public:
 
     void showPercentage(int value);
 
-    void sortAsc(int** p, int n);
+    int* sortAsc(int** p, int n);
+
+	static vector<int>* sortDsc(int n);
+
 
 private:
     int* total_dice;

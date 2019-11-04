@@ -96,5 +96,4 @@ int main() {
     }
 
     game->game_loop();
-
 }
