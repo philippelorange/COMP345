@@ -35,13 +35,13 @@ void Game::game_loop() {
     cout << "*** Time to play Risk! ***" << endl << endl;
 
     bool game_over = false;
-    while(!game_over) {
-        for (auto & _player : *_players) {
+    while (!game_over) {
+        for (auto& _player : *_players) {
             cout << _player->get_player_name() << ", it's your turn to play." << endl;
             reinforcements_phase(_player);
             attack_phase(_player);
             fortification_phase(_player);
-            if(has_victory()) {
+            if (has_victory()) {
                 game_over = true;
                 break;
             }
@@ -49,13 +49,14 @@ void Game::game_loop() {
     }
 
     cout << "*** The game is over! ***" << endl;
-    cout << "The champion is: " << _selected_map->get_countries()->at(0)->get_player()->get_player_name() << "!!!" << endl;
+    cout << "The champion is: " << _selected_map->get_countries()->at(0)->get_player()->get_player_name() << "!!!"
+         << endl;
 }
 
 void Game::setup_winning_game() {
     game_setup();
     startup_phase();
-    for(auto& c : *_selected_map->get_countries()) {
+    for (auto& c : *_selected_map->get_countries()) {
         c->set_player(_players->at(0));
     }
     game_loop();
@@ -79,9 +80,9 @@ void Game::select_map() {
     //The following block will find all files ending with .map, and split up the valid from the invalid ones,
     //for the user only to be able to select a valid file.
     auto* mapLoader = new MapLoader();
-    for(auto& p: std::filesystem::directory_iterator("../Map/Maps")) {
+    for (auto& p: std::filesystem::directory_iterator("../Map/Maps")) {
         if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
-            Map *map = mapLoader->read_map(p.path());
+            Map* map = mapLoader->read_map(p.path());
             if (map != nullptr && map->validate_continent_singularity() && map->validate_connected_graph()) {
                 map->set_name(p.path().filename());
                 valid_files.push_back(map);
@@ -92,36 +93,36 @@ void Game::select_map() {
     }
 
     int user_choice = -1;
-    while(user_choice < 1 || user_choice > valid_files.size()) {
+    while (user_choice < 1 || user_choice > valid_files.size()) {
         cout << "Please select a map from the following list: " << endl;
-        for(int i=0; i< valid_files.size(); i++) {
-            cout << "(" << i+1 << ") " << valid_files.at(i)->get_name() << endl;
+        for (int i = 0; i < valid_files.size(); i++) {
+            cout << "(" << i + 1 << ") " << valid_files.at(i)->get_name() << endl;
         }
 
-        if(!invalid_files.empty()) {
+        if (!invalid_files.empty()) {
             cout << endl << "Warning: The following maps were also found, but are invalid:" << endl;
-            for(auto& s : invalid_files) {
+            for (auto& s : invalid_files) {
                 cout << " - " << s << endl;
             }
         }
 
         cin >> user_choice;
-        if(cin.fail() || user_choice < 1 || user_choice > valid_files.size()) {
+        if (cin.fail() || user_choice < 1 || user_choice > valid_files.size()) {
             cin.clear();
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             cout << "Invalid input." << endl;
         }
     }
-    _selected_map = valid_files.at(user_choice-1);
+    _selected_map = valid_files.at(user_choice - 1);
     cout << "You have selected: " << _selected_map->get_name() << endl;
 }
 
 void Game::create_players() {
     int nb_players = -1;
-    while(nb_players < 2 || nb_players > 6) {
+    while (nb_players < 2 || nb_players > 6) {
         cout << "How many players want to play?" << endl;
         cin >> nb_players;
-        if(cin.fail() || nb_players > 6 || nb_players < 2) {
+        if (cin.fail() || nb_players > 6 || nb_players < 2) {
             cin.clear();
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             cout << "Invalid number of players." << endl;
@@ -130,16 +131,16 @@ void Game::create_players() {
 
     _players = new vector<Player*>();
 
-    for(int i=0; i<nb_players; i++) {
+    for (int i = 0; i < nb_players; i++) {
         string name;
         bool valid_name = false;
-        while(!valid_name) {
-            cout << "Enter name for player #" << i+1 << ":" << endl;
+        while (!valid_name) {
+            cout << "Enter name for player #" << i + 1 << ":" << endl;
             cin >> name;
-            if(i==0) {
+            if (i == 0) {
                 valid_name = true; //For the first player, no need to check for other players having the same name
             } else {
-                for (auto &p : *_players) {
+                for (auto& p : *_players) {
                     if (p->get_player_name() == name) {
                         cout << "Another player already has this name!" << endl;
                         valid_name = false;
@@ -174,7 +175,7 @@ void Game::determine_order() {
     //Use the std library to shuffle the player array
     std::shuffle(std::begin(*_players), end(*_players), re);
     cout << "Order of play has been determined: " << endl;
-    for(auto& p : *_players) {
+    for (auto& p : *_players) {
         cout << "\t -" << p->get_player_name() << endl;
     }
 }
@@ -186,20 +187,20 @@ void Game::assign_countries() {
     //will shuffle this index vector to randomly assign countries to each player.
     vector<int> country_indexes(_selected_map->get_countries()->size());
 
-    std::iota (std::begin(country_indexes), std::end(country_indexes), 0);
+    std::iota(std::begin(country_indexes), std::end(country_indexes), 0);
 
     std::random_device rd;
     auto re = default_random_engine(rd());
     std::shuffle(std::begin(country_indexes), end(country_indexes), re);
 
-    for(int i=0; i<_selected_map->get_countries()->size(); i++) {
-        _players->at(i%_players->size())->add_country(_selected_map->get_countries()->at(country_indexes.at(i)));
+    for (int i = 0; i < _selected_map->get_countries()->size(); i++) {
+        _players->at(i % _players->size())->add_country(_selected_map->get_countries()->at(country_indexes.at(i)));
     }
 
     cout << "Countries have been assigned! Here is the outcome: " << endl;
-    for(auto& p : *_players) {
+    for (auto& p : *_players) {
         cout << "\t- " << p->get_player_name() << ": " << endl;
-        for(auto& c : *p->get_player_owned_countries()) {
+        for (auto& c : *p->get_player_owned_countries()) {
             cout << "\t \t * " << c->get_name() << endl;
         }
     }
@@ -210,19 +211,29 @@ void Game::place_armies() {
 
     int nb_armies = 0;
 
-    switch(_players->size()) {
-        case 2 : nb_armies = 40; break;
-        case 3 : nb_armies = 35; break;
-        case 4 : nb_armies = 30; break;
-        case 5 : nb_armies = 25; break;
-        case 6 : nb_armies = 20; break;
+    switch (_players->size()) {
+        case 2 :
+            nb_armies = 40;
+            break;
+        case 3 :
+            nb_armies = 35;
+            break;
+        case 4 :
+            nb_armies = 30;
+            break;
+        case 5 :
+            nb_armies = 25;
+            break;
+        case 6 :
+            nb_armies = 20;
+            break;
     }
 
     //loop until the number of armies left is 0
-    for(int i=0; i<nb_armies; i++) {
-        for(auto & p : *_players) {
+    for (int i = 0; i < nb_armies; i++) {
+        for (auto& p : *_players) {
             int selection = -1;
-            while(selection < 1 || selection > p->get_player_owned_countries()->size()) {
+            while (selection < 1 || selection > p->get_player_owned_countries()->size()) {
                 cout << "\t" << p->get_player_name() << ", please place an army. You have " << (nb_armies - i)
                      << " left" << endl;
                 for (int k = 0; k < p->get_player_owned_countries()->size(); k++) {
@@ -236,7 +247,7 @@ void Game::place_armies() {
                     cout << "Invalid input." << endl;
                 }
             }
-            p->get_player_owned_countries()->at(selection-1)->add_army();
+            p->get_player_owned_countries()->at(selection - 1)->add_army();
         }
     }
 }
@@ -247,22 +258,21 @@ void Game::reinforcements_phase(Player* p) {
     cin >> t;
 }
 
-void Game::attack_phase(Player* p){
+void Game::attack_phase(Player* p) {
     cout << "\t*** " << p->get_player_name() << "'s Attack phase" << endl;
     string t;
     cin >> t;
 }
 
-void Game::fortification_phase(Player* p){
+void Game::fortification_phase(Player* p) {
     cout << "\t*** " << p->get_player_name() << "'s Fortification phase" << endl;
-    string t;
-    cin >> t;
+    p->fortify();
 }
 
 Player* Game::has_victory() {
     Player* p = _selected_map->get_countries()->at(0)->get_player();
     for (auto& c : *_selected_map->get_countries()) {
-        if(!(c->get_player()->get_player_name() == p->get_player_name())) {
+        if (!(c->get_player()->get_player_name() == p->get_player_name())) {
             return nullptr;
         }
 

@@ -34,10 +34,12 @@ public:
 
     vector<Dice*>* get_dice_container() const { return this->dice_container; };
 
-    void reinforce(); //handles number of troups added each turn
+    void reinforce(); //handles number of troops added each turn
+
     void attack();
 
     void fortify(); //handles the movement of troops into owned territories
+
     void update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus);
 
 private:
@@ -48,4 +50,8 @@ private:
     vector<Dice*>* dice_container;
     int countries_owned_bonus;
     int continents_owned_bonus;
+
+    string can_player_fortify();
+
+    bool can_player_fortify(const string& source_country, const string& target_country);
 };
