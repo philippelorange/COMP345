@@ -267,7 +267,7 @@ void Game::attack_phase(Player* p){
 			cout << "\t*** " << player_name << ", do you still want to attack? (y/n)" << endl;
 			cin >> answer;
 		} while (!(answer.compare("y")==0|| answer.compare("n")==0));
-		if(answer.compare("y") == 0))
+		if(answer.compare("y") == 0)
 			player_wants_to_attack = true;
 		else
 			player_wants_to_attack = false;

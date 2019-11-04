@@ -73,7 +73,7 @@ void Player::attack() {
 
 	cout <<this->get_player_name()<<", please select a country to attack from among the following countries:"<<endl;
 	for (Country* country_pointer: *attacking_player_s_contries) {
-		if (country_pointer->get_nb_armies > 0) {
+		if (country_pointer->get_nb_armies() > 0) {
 			valid_source.push_back(country_pointer);
 			cout << country_pointer->get_name() << endl;
 		}
