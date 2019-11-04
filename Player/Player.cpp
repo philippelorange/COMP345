@@ -66,6 +66,9 @@ void Player::reinforce() {
 	int* num_armies = new int(floor(this->get_player_owned_countries()->size() / 3));
 
 	//add num of continents owned (continent control value)
+	/*for (int i = 0; i < this->owned_continents->size(); i++){
+		*num_armies += this->owned_continents.get_control_value();
+	}*/
 	*num_armies += this->owned_continents->size();
 
 	//exchange if more than 5 cards
