@@ -94,7 +94,7 @@ void Player::attack() {
 	cout << this->get_player_name() << ", please select a country to attack from " << players_choice_source<<" among the following countries:" <<endl;
 	vector<Country*> valid_target;
 	for (Country* country_pointer :*(attack_source->get_adjacent_countries())) {
-		if (country_pointer->get_player() == this) {
+		if (country_pointer->get_player() != this) {
 			valid_target.push_back(country_pointer);
 			cout << country_pointer->get_name() << endl;
 		}
@@ -103,7 +103,7 @@ void Player::attack() {
 	bool attack_target_valid = false;
 	do {
 		cin >> players_choice_target;
-		for (Country* country_pointer : *attacking_player_s_contries) {
+		for (Country* country_pointer : valid_target) {
 			if ((country_pointer->get_name()).compare(players_choice_target) == 0) {
 				attack_target_valid = true;
 				attack_target = country_pointer;
