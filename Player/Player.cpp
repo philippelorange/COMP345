@@ -10,6 +10,7 @@
 Player::Player(Deck* deck) {
     player_name = new string("Default");
     this->hand = new Hand();
+	this->deck = new Deck();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
