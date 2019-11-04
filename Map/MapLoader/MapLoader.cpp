@@ -61,7 +61,7 @@ void MapLoader::parse_continents(vector<Continent*>* continents) {
             i++;
         }
 
-        auto* c = new Continent(parsed[0]);
+        auto* c = new Continent(parsed[0], stoi(parsed[1]));
         continents->push_back(c);
     }
 }

@@ -40,12 +40,14 @@ private:
 
 class Continent {
 public:
-    Continent(string name);
+    Continent(string name, int control_value);
 
     //getters
     string get_name() const;
 
     vector<Country*>* get_countries() const;
+
+    int get_control_value() const;
 
     bool has_country(Country*);
 
@@ -59,6 +61,7 @@ public:
 private:
     string* name_;
     vector<Country*>* countries_;
+    int* control_value_;
 
     void depth_first_traversal(Country* country, vector<bool>* visited_countries) const;
 
