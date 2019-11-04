@@ -157,6 +157,14 @@ bool Continent::already_added(Country* country) const {
     return false;
 }
 
+Country::Country() {
+    name_ = nullptr;
+    continent_ = nullptr;
+    player_ = nullptr;
+    nb_armies_ = nullptr;
+    adjacent_countries_ = nullptr;
+}
+
 Country::Country(string name, Continent* continent) :
         name_(new string(name)),
         continent_(continent),
