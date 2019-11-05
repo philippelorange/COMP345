@@ -47,8 +47,6 @@ private:
     Hand* hand;
     Deck* deck;
     vector<Dice*>* dice_container;
-    int countries_owned_bonus;
-    int continents_owned_bonus;
 
     string can_player_fortify();
 

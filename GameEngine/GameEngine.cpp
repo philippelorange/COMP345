@@ -270,10 +270,7 @@ void Game::attack_phase(Player* p) {
         cout << player_name << ", do you want to attack? (y/n)" << endl;
         cin >> answer;
     } while (!(answer == "y" || answer == "n"));
-    if (answer == "y")
-        player_wants_to_attack = true;
-    else
-        player_wants_to_attack = false;
+    player_wants_to_attack = answer == "y";
 
     //The attack phase is a loop that prompts the user for intent to attack and calls the attack method, as long as he wishes to do so
     while (player_wants_to_attack) {
@@ -282,10 +279,7 @@ void Game::attack_phase(Player* p) {
             cout << player_name << ", would you like to initiate another attack? (y/n)" << endl;
             cin >> answer;
         } while (!(answer == "y" || answer == "n"));
-        if (answer == "y")
-            player_wants_to_attack = true;
-        else
-            player_wants_to_attack = false;
+        player_wants_to_attack = answer == "y";
     }
 }
 

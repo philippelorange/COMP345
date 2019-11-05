@@ -7,7 +7,6 @@
 #include "Player.h"
 #include <algorithm>
 
-
 Player::Player(Deck* deck) {
     player_name = "Default";
     this->hand = new Hand();
@@ -15,8 +14,6 @@ Player::Player(Deck* deck) {
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
     this->deck = deck;
-    countries_owned_bonus = 3;
-    continents_owned_bonus = 0;
 }
 
 Player::Player(std::string player_name, Deck* deck) {
@@ -26,8 +23,6 @@ Player::Player(std::string player_name, Deck* deck) {
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
     this->deck = deck;
-    countries_owned_bonus = 3;
-    continents_owned_bonus = 0;
 }
 
 Player::~Player() {
@@ -64,7 +59,7 @@ void Player::reinforce() {
     int* num_armies = new int(this->get_player_owned_countries()->size() / 3);
 
     //add num of continents owned (continent control value)
-    for (auto & owned_continent : *this->owned_continents) {
+    for (auto& owned_continent : *this->owned_continents) {
         *num_armies += owned_continent->get_control_value();
     }
 
@@ -280,12 +275,12 @@ void Player::fortify() {
         cin >> answer;
 
         if (answer == "fortify") {
-            string can_player_fortify = this->can_player_fortify();
+            string can_player_fortify = this->can_player_fortify(); // Check if player has ability to fortify from the get go
             if (can_player_fortify == "You can fortify!") {
                 cout << "Here is a list of your owned countries" << endl;
 
                 for (Country* owned_country: *this->owned_countries) {
-                    cout << "Country: " << owned_country->get_name() << endl;
+                    cout << "Country: " << owned_country->get_name() << endl; // print owned countries
                 }
 
                 while (true) {
@@ -300,11 +295,11 @@ void Player::fortify() {
 
                     for (Country* owned_country: *this->owned_countries) {
                         if (source_country == owned_country->get_name()) {
-                            is_source_country_valid = true;
+                            is_source_country_valid = true; // If player owns source country
                         }
 
                         if (target_country == owned_country->get_name()) {
-                            is_target_country_valid = true;
+                            is_target_country_valid = true; // If player owns target country
                         }
                     }
 
@@ -325,7 +320,7 @@ void Player::fortify() {
                     }
 
                     string can_player_fortify_source_and_target = this->can_player_fortify(source_country,
-                                                                                           target_country);
+                                                                                           target_country); // check if user can fortify with source country and target country
 
                     if (can_player_fortify_source_and_target == "Can fortify") {
 
@@ -339,20 +334,24 @@ void Player::fortify() {
                                 if (owned_country->get_name() == source_country) {
                                     source_country_ptr = owned_country;
                                     cout << "Armies in:" << source_country << " : "
-                                         << owned_country->get_nb_armies() << endl;
+                                         << owned_country->get_nb_armies()
+                                         << endl; // Print nbr of army in source country
                                 }
                                 if (owned_country->get_name() == target_country) {
                                     cout << "Armies in:" << target_country << " : "
-                                         << owned_country->get_nb_armies() << endl;
+                                         << owned_country->get_nb_armies()
+                                         << endl; // Print nbr of army in target country
                                     target_country_ptr = owned_country;
                                 }
                             }
 
                             if (nbr_of_armies_moved > 0 && nbr_of_armies_moved < source_country_ptr->get_nb_armies()) {
                                 source_country_ptr->set_nb_armies(
-                                        source_country_ptr->get_nb_armies() - nbr_of_armies_moved);
+                                        source_country_ptr->get_nb_armies() -
+                                        nbr_of_armies_moved); // set nbr of armies for source to be source - armies moved
                                 target_country_ptr->set_nb_armies(
-                                        target_country_ptr->get_nb_armies() + nbr_of_armies_moved);
+                                        target_country_ptr->get_nb_armies() +
+                                        nbr_of_armies_moved); // set nbr of armies for target to be source + armies moved
 
                                 cout << "There is now " << source_country_ptr->get_nb_armies() << " armies in "
                                      << source_country_ptr->get_name() << endl;
@@ -422,10 +421,10 @@ string Player::can_player_fortify() {
 string Player::can_player_fortify(const string& source_country, const string& target_country) {
     for (auto& owned_country : *owned_countries) { // Get one country
         if (owned_country->get_name() == source_country) {
-            if (owned_country->get_nb_armies() == 1) {
+            if (owned_country->get_nb_armies() == 1) { // only 1 country from source, can't fortify
                 return "Cannot fortify! Source country only has 1 army";
             }
-            for (auto& adjacent_country : *owned_country->get_adjacent_countries()) {
+            for (auto& adjacent_country : *owned_country->get_adjacent_countries()) { // check adjacent country
                 if (adjacent_country->get_name() == target_country) {
                     return "Can fortify";
                 }
