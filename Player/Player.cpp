@@ -4,6 +4,7 @@
 #include "Cards/Cards.h"
 #include "Dice/Dice.h"
 #include "Player.h"
+#include <algorithm>
 
 
 Player::Player() {
@@ -165,6 +166,9 @@ void Player::attack() {
 		vector<int>* attacker_rolls = Dice::sortDsc(number_of_dices_attack);
         vector<int>* defender_rolls = Dice::sortDsc(number_of_dices_defense);
 
+		cout<<"Attacker has: "<< armies_in_attacking_country <<" troups"<<endl;
+		cout <<"Defender has: " << armies_in_defending_country << " troups" << endl;
+
 		cout << "Number of dice comparisons: " << number_of_comparisons << endl;
 
 		for (int i = 0; i < number_of_comparisons; i++) {
@@ -191,6 +195,9 @@ void Player::attack() {
 			battle_is_over = true;
 			attacker_won = true;
 		}
+
+		cout << "Attacker has: " << armies_in_attacking_country << " troups" << endl;
+		cout << "Defender has: " << armies_in_defending_country << " troups" << endl;
 		
 		if (!battle_is_over) {
 			do {
@@ -219,7 +226,7 @@ void Player::attack() {
 		attack_target->set_nb_armies(armies_moved_to_conquered_country);
 	}
 
-    cout << "*** Battle is over ***" << endl;1
+    cout << "*** Battle is over ***" << endl;
 }
 
 void Player::fortify() {
