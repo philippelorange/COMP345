@@ -50,7 +50,8 @@ void Game::game_loop() {
     }
 
     cout << "*** The game is over! ***" << endl;
-    cout << "The champion is: " << _selected_map->get_countries()->at(0)->get_player()->get_player_name() << "!!!" << endl;
+    cout << "The champion is: " << _selected_map->get_countries()->at(0)->get_player()->get_player_name() << "!!!"
+         << endl;
 }
 
 void Game::setup_winning_game() {
@@ -194,7 +195,7 @@ void Game::assign_countries() {
     std::shuffle(std::begin(country_indexes), end(country_indexes), re);
 
     for (int i = 0; i < _selected_map->get_countries()->size(); i++) {
-        _players->at(i%_players->size())->add_country(_selected_map->get_countries()->at(country_indexes.at(i)));
+        _players->at(i % _players->size())->add_country(_selected_map->get_countries()->at(country_indexes.at(i)));
         _selected_map->get_countries()->at(country_indexes.at(i))->add_army();
     }
 
@@ -212,12 +213,22 @@ void Game::place_armies() {
 
     int nb_armies = 0;
 
-    switch(_players->size()) {
-        case 2 : nb_armies = 40; break;
-        case 3 : nb_armies = 35; break;
-        case 4 : nb_armies = 30; break;
-        case 5 : nb_armies = 25; break;
-        case 6 : nb_armies = 20; break;
+    switch (_players->size()) {
+        case 2 :
+            nb_armies = 40;
+            break;
+        case 3 :
+            nb_armies = 35;
+            break;
+        case 4 :
+            nb_armies = 30;
+            break;
+        case 5 :
+            nb_armies = 25;
+            break;
+        case 6 :
+            nb_armies = 20;
+            break;
     }
 
     //loop until the number of armies left is 0
@@ -245,37 +256,37 @@ void Game::place_armies() {
 
 void Game::reinforcements_phase(Player* p) {
     cout << "\t*** " << p->get_player_name() << "'s Reinforcements phase" << endl;
-	p->reinforce();
+    p->reinforce();
 }
 
-void Game::attack_phase(Player* p){
-	string player_name = p->get_player_name();
+void Game::attack_phase(Player* p) {
+    string player_name = p->get_player_name();
     cout << "*** " << player_name << "'s Attack phase ***" << endl;
-	string answer;
+    string answer;
 
-	//Check if player wants to initiate an attack
-	bool player_wants_to_attack;
+    //Check if player wants to initiate an attack
+    bool player_wants_to_attack;
     do {
         cout << player_name << ", do you want to attack? (y/n)" << endl;
         cin >> answer;
     } while (!(answer == "y" || answer == "n"));
-    if(answer == "y")
+    if (answer == "y")
         player_wants_to_attack = true;
     else
         player_wants_to_attack = false;
 
-	//The attack phase is a loop that prompts the user for intent to attack and calls the attack method, as long as he wishes to do so
-	while (player_wants_to_attack) {
-		p->attack();
-		do {
-			cout << player_name << ", would you like to initiate another attack? (y/n)" << endl;
-			cin >> answer;
-		} while (!(answer == "y" || answer == "n"));
-		if(answer == "y")
-			player_wants_to_attack = true;
-		else
-			player_wants_to_attack = false;
-	}
+    //The attack phase is a loop that prompts the user for intent to attack and calls the attack method, as long as he wishes to do so
+    while (player_wants_to_attack) {
+        p->attack();
+        do {
+            cout << player_name << ", would you like to initiate another attack? (y/n)" << endl;
+            cin >> answer;
+        } while (!(answer == "y" || answer == "n"));
+        if (answer == "y")
+            player_wants_to_attack = true;
+        else
+            player_wants_to_attack = false;
+    }
 }
 
 void Game::fortification_phase(Player* p) {

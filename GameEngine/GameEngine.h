@@ -48,7 +48,6 @@ private:
     void create_deck();
 
 
-
     Deck* _deck;
     Map* _selected_map;
     vector<Player*>* _players;
