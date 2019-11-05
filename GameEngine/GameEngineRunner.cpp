@@ -68,32 +68,6 @@ int main() {
     game->game_setup();
     game->determine_order();
     game->assign_countries();
-
-    cout << "Time to place the armies!" << endl;
-
-    int nb_armies = 5;
-
-    //loop until the number of armies left is 0
-    for (int i = 0; i < nb_armies; i++) {
-        for (auto& p : *game->get_players()) {
-            int selection = -1;
-            while (selection < 1 || selection > p->get_player_owned_countries()->size()) {
-                cout << "\t" << p->get_player_name() << ", please place an army. You have " << (nb_armies - i)
-                     << " left" << endl;
-                for (int k = 0; k < p->get_player_owned_countries()->size(); k++) {
-                    cout << "\t \t (" << (k + 1) << ") " << p->get_player_owned_countries()->at(k)->get_name() << endl;
-                }
-
-                cin >> selection;
-                if (cin.fail() || selection < 1 || selection > p->get_player_owned_countries()->size()) {
-                    cin.clear();
-                    cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    cout << "Invalid input." << endl;
-                }
-            }
-            p->get_player_owned_countries()->at(selection - 1)->add_army();
-        }
-    }
-
+    game->place_armies();
     game->game_loop();
 }

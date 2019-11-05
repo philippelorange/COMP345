@@ -243,18 +243,18 @@ void Game::place_armies() {
 }
 
 void Game::reinforcements_phase(Player* p) {
-    cout << "\t*** " << p->get_player_name() << "'s Reinforcements phase" << endl;
+    cout << "*** " << p->get_player_name() << "'s Reinforcements phase ***" << endl;
     string t;
     cin >> t;
 }
 
 void Game::attack_phase(Player* p){
 	string player_name = p->get_player_name();
-    cout << "\t*** " << player_name << "'s Attack phase" << endl;
+    cout << "*** " << player_name << "'s Attack phase ***" << endl;
 	string answer;
 	bool player_wants_to_attack;
     do {
-        cout << "\t*** " << player_name << ", do you want to attack? (y/n)" << endl;
+        cout << player_name << ", do you want to attack? (y/n)" << endl;
         cin >> answer;
     } while (!(answer == "y" || answer == "n"));
     if(answer == "y")
@@ -265,7 +265,7 @@ void Game::attack_phase(Player* p){
 	while (player_wants_to_attack) {
 		p->attack();
 		do {
-			cout << "\t*** " << player_name << ", would you like to initiate another attack? (y/n)" << endl;
+			cout << player_name << ", would you like to initiate another attack? (y/n)" << endl;
 			cin >> answer;
 		} while (!(answer == "y" || answer == "n"));
 		if(answer == "y")
@@ -273,11 +273,10 @@ void Game::attack_phase(Player* p){
 		else
 			player_wants_to_attack = false;
 	}
-	cout << "\t*** " << player_name << "'s Attack phase is over." << endl;
 }
 
 void Game::fortification_phase(Player* p) {
-    cout << "\t*** " << p->get_player_name() << "'s Fortification phase" << endl;
+    cout << "*** " << p->get_player_name() << "'s Fortification phase ***" << endl;
     p->fortify();
 }
 

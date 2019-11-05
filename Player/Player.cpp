@@ -215,11 +215,10 @@ void Player::attack() {
 		attack_target->set_nb_armies(armies_moved_to_conquered_country);
 	}
 
-    cout << "*** Battle is over ***" << endl;1
+    cout << "*** Battle is over ***" << endl;
 }
 
 void Player::fortify() {
-    cout << "the method fortify has been called by" << this->get_player_name() << std::endl;
     string answer;
     while (true) { // loop until exit
         cout << "What do you wish to do (fortify, exit) ?" << endl;
@@ -292,10 +291,8 @@ void Player::fortify() {
                             }
 
                             if (nbr_of_armies_moved > 0 && nbr_of_armies_moved < source_country_ptr->get_nb_armies()) {
-                                source_country_ptr->set_nb_armies(
-                                        new int(source_country_ptr->get_nb_armies() - nbr_of_armies_moved));
-                                target_country_ptr->set_nb_armies(
-                                        new int(target_country_ptr->get_nb_armies() + nbr_of_armies_moved));
+                                source_country_ptr->set_nb_armies(source_country_ptr->get_nb_armies() - nbr_of_armies_moved);
+                                target_country_ptr->set_nb_armies(target_country_ptr->get_nb_armies() + nbr_of_armies_moved);
 
                                 cout << "There is now " << source_country_ptr->get_nb_armies() << " armies in "
                                      << source_country_ptr->get_name() << endl;
