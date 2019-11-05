@@ -71,9 +71,9 @@ void Player::reinforce() {
     }*/
     *num_armies += this->owned_continents->size();
 
-    for (int i = 0; i < 5; i++) {
-        this->deck->draw(this->hand);
-    }
+//    for (int i = 0; i < 5; i++) { add if TA want's to see with cards
+//        this->deck->draw(this->hand);
+//    }
 
     //exchange if more than 4 cards
     if (this->hand->get_hand_cards()->size() > 4) {
