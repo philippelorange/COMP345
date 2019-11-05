@@ -10,7 +10,7 @@ class Player {
 public:
     Player();
 
-    Player(std::string name);
+    Player(std::string name, Deck* deck);
 
     ~Player();
 
@@ -47,11 +47,12 @@ private:
     vector<Country*>* owned_countries;
     vector<Continent*>* owned_continents;
     Hand* hand;
+	Deck* deck;
     vector<Dice*>* dice_container;
     int countries_owned_bonus;
     int continents_owned_bonus;
 
     string can_player_fortify();
 
-    bool can_player_fortify(const string& source_country, const string& target_country);
+    string can_player_fortify(const string& source_country, const string& target_country);
 };

@@ -22,6 +22,15 @@ public:
 
     void place_armies();
 
+    //Main Game loop
+    void reinforcements_phase(Player* p);
+
+    void attack_phase(Player* p);
+
+    void fortification_phase(Player* p);
+
+    Player* has_victory();
+
     Map* get_map();
 
     vector<Player*>* get_players();
@@ -38,14 +47,7 @@ private:
 
     void create_deck();
 
-    //Main Game loop
-    void reinforcements_phase(Player* p);
 
-    void attack_phase(Player* p);
-
-    void fortification_phase(Player* p);
-
-    Player* has_victory();
 
     Deck* _deck;
     Map* _selected_map;

@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <random>
+#include <numeric>
 
 #include "GameEngine.h"
 #include "Map/Map.h"
@@ -21,8 +22,8 @@ void Game::start() {
 void Game::game_setup() {
     print_intro();
     select_map();
-    create_players();
     create_deck();
+    create_players();
 }
 
 void Game::startup_phase() {
@@ -150,7 +151,7 @@ void Game::create_players() {
                 }
             }
         }
-        _players->push_back(new Player(name));
+        _players->push_back(new Player(name, this->_deck));
     }
 }
 
@@ -243,9 +244,8 @@ void Game::place_armies() {
 }
 
 void Game::reinforcements_phase(Player* p) {
-    cout << "*** " << p->get_player_name() << "'s Reinforcements phase ***" << endl;
-    string t;
-    cin >> t;
+    cout << "\t*** " << p->get_player_name() << "'s Reinforcements phase" << endl;
+	p->reinforce();
 }
 
 void Game::attack_phase(Player* p){
