@@ -10,7 +10,6 @@
 Player::Player() {
     player_name = "Default";
     this->hand = new Hand();
-	this->deck = new Deck();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
@@ -18,12 +17,13 @@ Player::Player() {
     continents_owned_bonus = 0;
 }
 
-Player::Player(std::string playername) {
+Player::Player(std::string playername, Deck* deck) {
     this->player_name = playername;
     this->hand = new Hand();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
+    this->deck = deck;
     countries_owned_bonus = 3;
     continents_owned_bonus = 0;
 }
@@ -62,43 +62,51 @@ void Player::draw(Deck* deck) {
 }
 
 void Player::reinforce() {
-	//#countries owned/3 (rounded down)
-	int* num_armies = new int(floor(this->get_player_owned_countries()->size() / 3));
+    //#countries owned/3 (rounded down)
+    int* num_armies = new int(this->get_player_owned_countries()->size() / 3);
 
-	//add num of continents owned (continent control value)
-	/*for (int i = 0; i < this->owned_continents->size(); i++){
-		*num_armies += this->owned_continents.get_control_value();
-	}*/
-	*num_armies += this->owned_continents->size();
+    //add num of continents owned (continent control value)
+    /*for (int i = 0; i < this->owned_continents->size(); i++){
+        *num_armies += this->owned_continents.get_control_value();
+    }*/
+    *num_armies += this->owned_continents->size();
 
-	//exchange if more than 5 cards
-	if (this->hand->get_hand_cards()->size() > 5) {
-		this->hand->exchange(this->deck);
-	}
-	//if armies is less than 3, set to 3
-	if (*num_armies < 3) {
-		*num_armies = 3;
-	}
+    for (int i = 0; i < 5; i++) {
+        this->deck->draw(this->hand);
+    }
 
-	//place armies at desired countries
-	for (int i = 0; i < *num_armies; i++) {
-		int selection = -1;
-		while (selection < 1 || selection > this->get_player_owned_countries()->size()) {
-			cout << "\t" << this->get_player_name() << ", please place an army. You have " << (*num_armies - i)
-				<< " left" << endl;
-			for (int k = 0; k < this->get_player_owned_countries()->size(); k++) {
-				cout << "\t \t (" << (k + 1) << ") " << this->get_player_owned_countries()->at(k)->get_name() << endl;
-			}
+    //exchange if more than 4 cards
+    if (this->hand->get_hand_cards()->size() > 4) {
+        this->hand->exchange(this->deck);
+    }
+    //if armies is less than 3, set to 3
+    if (*num_armies < 3) {
+        *num_armies = 3;
+    }
 
-			cin >> selection;
-			if (cin.fail() || selection < 1 || selection > this->get_player_owned_countries()->size()) {
-				cin.clear();
-				cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				cout << "Invalid input." << endl;
-			}
-			this->get_player_owned_countries()->at(selection - 1)->add_army();
-		}
-	}
+    //place armies at desired countries
+    for (int i = 0; i < *num_armies; i++) {
+        int selection = -1;
+        while (selection < 1 || selection > this->get_player_owned_countries()->size()) {
+            cout << "\t" << this->get_player_name() << ", please place an army. You have " << (*num_armies - i)
+                 << " left" << endl;
+            for (int k = 0; k < this->get_player_owned_countries()->size(); k++) {
+                cout << "\t \t (" << (k + 1) << ") " << this->get_player_owned_countries()->at(k)->get_name() << endl;
+            }
+
+            cin >> selection;
+            if (cin.fail() || selection < 1 || selection > this->get_player_owned_countries()->size()) {
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                cout << "Invalid input." << endl;
+            }
+            this->get_player_owned_countries()->at(selection - 1)->add_army();
+        }
+    }
+
+    for (auto& owned_country : *owned_countries) {
+        cout << owned_country->get_name() << " has " << owned_country->get_nb_armies() << " armies" << endl;
+    }
 }
 
 void Player::attack() {
@@ -317,7 +325,10 @@ void Player::fortify() {
                         continue;
                     }
 
-                    if (this->can_player_fortify(source_country, target_country)) {
+                    string can_player_fortify_source_and_target = this->can_player_fortify(source_country,
+                                                                                           target_country);
+
+                    if (can_player_fortify_source_and_target == "Can fortify") {
 
                         while (true) {
                             int nbr_of_armies_moved;
@@ -345,7 +356,7 @@ void Player::fortify() {
                                 cout << "There is now " << source_country_ptr->get_nb_armies() << " armies in "
                                      << source_country_ptr->get_name() << endl;
 
-                                cout << "There is now " << target_country_ptr->get_nb_armies() << "armies in "
+                                cout << "There is now " << target_country_ptr->get_nb_armies() << " armies in "
                                      << target_country_ptr->get_name();
                                 break;
                             } else {
@@ -362,7 +373,7 @@ void Player::fortify() {
                         }
 
                     } else {
-                        cout << "These country aren't adjacent to each other! Restart."
+                        cout << can_player_fortify_source_and_target
                              << endl;
                         continue;
                     }
@@ -407,15 +418,18 @@ string Player::can_player_fortify() {
     return "You cannot fortify! You do not own a country that is adjacent to another country";
 }
 
-bool Player::can_player_fortify(const string& source_country, const string& target_country) {
+string Player::can_player_fortify(const string& source_country, const string& target_country) {
     for (auto& owned_country : *owned_countries) { // Get one country
         if (owned_country->get_name() == source_country) {
+            if (owned_country->get_nb_armies() == 1) {
+                return "Cannot fortify! Source country only has 1 army";
+            }
             for (auto& adjacent_country : *owned_country->get_adjacent_countries()) {
                 if (adjacent_country->get_name() == target_country) {
-                    return true;
+                    return "Can fortify";
                 }
             }
         }
     }
-    return false;
+    return "Cannot fortify! Countries aren't adjacent";
 }

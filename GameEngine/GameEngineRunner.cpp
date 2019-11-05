@@ -55,19 +55,12 @@ int main() {
     game->setup_winning_game();
     */
 
-    /**/
-    game = new Game();
-    game->game_setup();
-    game->startup_phase();
-    game->game_loop();
-    */
 
+//    game = new Game();
+//    game->game_setup();
+//    game->startup_phase();
+//    game->game_loop();
 
-//  Part 5
     Game* game = new Game();
-    game->game_setup();
-    game->determine_order();
-    game->assign_countries();
-    game->place_armies();
-    game->game_loop();
+    game->start();
 }

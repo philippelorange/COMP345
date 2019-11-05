@@ -10,7 +10,7 @@ class Player {
 public:
     Player();
 
-    Player(std::string name);
+    Player(std::string name, Deck* deck);
 
     ~Player();
 
@@ -54,5 +54,5 @@ private:
 
     string can_player_fortify();
 
-    bool can_player_fortify(const string& source_country, const string& target_country);
+    string can_player_fortify(const string& source_country, const string& target_country);
 };

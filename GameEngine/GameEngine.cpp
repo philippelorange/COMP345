@@ -21,9 +21,9 @@ void Game::start() {
 
 void Game::game_setup() {
     print_intro();
-    //select_map();
-    create_players();
+    select_map();
     create_deck();
+    create_players();
 }
 
 void Game::startup_phase() {
@@ -151,7 +151,7 @@ void Game::create_players() {
                 }
             }
         }
-        _players->push_back(new Player(name));
+        _players->push_back(new Player(name, this->_deck));
     }
 }
 
