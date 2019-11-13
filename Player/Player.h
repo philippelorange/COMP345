@@ -14,7 +14,7 @@ public:
 
     ~Player();
 
-    [[nodiscard]] std::string get_player_name() const { return this->player_name; };
+    [[nodiscard]] std::string get_player_name() const { return *this->player_name; };
 
     [[nodiscard]] vector<Country*>* get_player_owned_countries() const { return this->owned_countries; };
 
@@ -41,7 +41,7 @@ public:
     void update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus);
 
 private:
-    std::string player_name;
+    string* player_name;
     vector<Country*>* owned_countries;
     vector<Continent*>* owned_continents;
     Hand* hand;
@@ -51,4 +51,6 @@ private:
     string can_player_fortify();
 
     string can_player_fortify(const string& source_country, const string& target_country);
+
+    int* print_and_return_index_country_selected();
 };

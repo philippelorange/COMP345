@@ -80,16 +80,16 @@ void Hand::delete_card_from_hand_and_add_it_to_deck(Deck* deck, int index) {
     this->hand_cards_->erase(this->hand_cards_->begin() + index);
 }
 
-void Hand::exchange(Deck* deck) {
+int Hand::exchange(Deck* deck) {
     if (deck->get_deck_cards()->empty()) {
         cout << "Deck is empty! Cannot draw" << endl;
-        return;
+        return 0;
     }
 
     if (hand_cards_->size() < 3) {
         cout << "There is not enough cards in your hand to draw, you have " << hand_cards_->size() << " cards..."
              << endl;
-        return;
+        return 0;
     }
 
     int infantry_counter = 0, cavalry_counter = 0, artillery_counter = 0;
@@ -131,12 +131,13 @@ void Hand::exchange(Deck* deck) {
 
     } else {
         cout << "Conditions aren't met for you to exchange cards..." << endl;
-        return;
+        return 0;
     }
 
     static int exchange_counter = 0; // static counter for armies
     exchange_counter++; // increment every time function get to this point
     cout << "Player receive " << exchange_counter * 5 << " armies " << endl;
+    return exchange_counter;
 }
 
 void Hand::exchange_three_different(Deck* deck) {
