@@ -51,4 +51,6 @@ private:
     string can_player_fortify();
 
     string can_player_fortify(const string& source_country, const string& target_country);
+
+    int* print_and_return_index_country_selected();
 };
