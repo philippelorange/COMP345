@@ -8,7 +8,7 @@
 #include <algorithm>
 
 Player::Player(Deck* deck) {
-    player_name = "Default";
+    player_name = new string("Default");
     this->hand = new Hand();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
@@ -17,7 +17,7 @@ Player::Player(Deck* deck) {
 }
 
 Player::Player(std::string player_name, Deck* deck) {
-    this->player_name = std::move(player_name);
+    this->player_name = new string(std::move(player_name));
     this->hand = new Hand();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;

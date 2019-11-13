@@ -231,8 +231,6 @@ void Game::place_armies() {
             break;
     }
 
-    nb_armies = 5;
-
     //loop until the number of armies left is 0
     for (int i = 0; i < nb_armies; i++) {
         for (auto& p : *_players) {
