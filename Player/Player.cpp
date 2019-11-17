@@ -10,11 +10,12 @@
 Player::Player(Deck* deck) {
     player_name = new string("Default");
     this->hand = new Hand();
-	this->deck = new Deck();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
     this->deck = deck;
+	this->strategy = new Human();
+
 }
 
 Player::Player(std::string player_name, Deck* deck) {
@@ -24,6 +25,18 @@ Player::Player(std::string player_name, Deck* deck) {
     this->owned_continents = new vector<Continent*>;
     this->dice_container = new vector<Dice*>;
     this->deck = deck;
+	this->strategy = new Human();
+}
+
+Player::Player(std::string player_name, Deck* deck, Strategy *newStrategy) {
+	this->player_name = new string(std::move(player_name));
+	this->hand = new Hand();
+	this->owned_countries = new vector<Country*>;
+	this->owned_continents = new vector<Continent*>;
+	this->dice_container = new vector<Dice*>;
+	this->deck = deck;
+	this->strategy = newStrategy;
+
 }
 
 Player::~Player() {
@@ -435,6 +448,11 @@ void Player::fortify() {
 
 void Player::update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus) {
     //TODO
+}
+
+void Player::setStrategy(Strategy* newStrategy)
+{
+	this->strategy = newStrategy;
 }
 
 string Player::can_player_fortify() {

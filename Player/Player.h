@@ -6,12 +6,16 @@
 #include "Map/Map.h"
 #include "Cards/Cards.h"
 #include "Dice/Dice.h"
+#include "PlayerStrategies.h"
+
 
 class Player : public PhaseObservable {
 public:
     explicit Player(Deck* deck);
 
     Player(std::string name, Deck* deck);
+
+	Player(std::string player_name, Deck* deck, Strategy* newStrategy);
 
     ~Player();
 
@@ -31,6 +35,8 @@ public:
 
     [[nodiscard]] Hand* get_hand() const { return this->hand; };
 
+	Strategy* get_strategy() const { return this->strategy; };
+
     [[nodiscard]] vector<Dice*>* get_dice_container() const { return this->dice_container; };
 
     void reinforce(); //handles number of troops added each turn
@@ -41,13 +47,17 @@ public:
 
     void update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus);
 
+	void setStrategy(Strategy *newStrategy);
+
+
 private:
     string* player_name;
     vector<Country*>* owned_countries;
     vector<Continent*>* owned_continents;
     Hand* hand;
     Deck* deck;
-    vector<Dice*>* dice_container;
+	Strategy* strategy;
+    vector<Dice*>* dice_container; 
 
     string can_player_fortify();
 
