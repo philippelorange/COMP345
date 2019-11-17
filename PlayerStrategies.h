@@ -5,9 +5,6 @@ class Player;
 
 class Strategy{
 	public:
-		virtual void fortify();
-		virtual void attack();
-		virtual void reinforce();
 		virtual int* execute_strategy();
 };
 

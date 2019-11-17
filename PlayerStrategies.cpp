@@ -1,16 +1,5 @@
 #include "PlayerStrategies.h"
 
-void Strategy::fortify()
-{
-}
-
-void Strategy::attack()
-{
-}
-
-void Strategy::reinforce()
-{
-}
 
 int* Strategy::execute_strategy()
 {
