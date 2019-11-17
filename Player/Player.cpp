@@ -8,7 +8,7 @@
 #include <algorithm>
 
 Player::Player(Deck* deck) {
-    player_name = "Default";
+    player_name = new string("Default");
     this->hand = new Hand();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
@@ -17,7 +17,7 @@ Player::Player(Deck* deck) {
 }
 
 Player::Player(std::string player_name, Deck* deck) {
-    this->player_name = std::move(player_name);
+    this->player_name = new string(std::move(player_name));
     this->hand = new Hand();
     this->owned_countries = new vector<Country*>;
     this->owned_continents = new vector<Continent*>;
@@ -63,13 +63,9 @@ void Player::reinforce() {
         *num_armies += owned_continent->get_control_value();
     }
 
-//    for (int i = 0; i < 5; i++) { add if TA want's to see with cards
-//        this->deck->draw(this->hand);
-//    }
-
     //exchange if more than 4 cards
     if (this->hand->get_hand_cards()->size() > 4) {
-        this->hand->exchange(this->deck);
+        *num_armies += this->hand->exchange(this->deck);
     }
     //if armies is less than 3, set to 3
     if (*num_armies < 3) {
@@ -279,17 +275,15 @@ void Player::fortify() {
             if (can_player_fortify == "You can fortify!") {
                 cout << "Here is a list of your owned countries" << endl;
 
-                for (Country* owned_country: *this->owned_countries) {
-                    cout << "Country: " << owned_country->get_name() << endl; // print owned countries
-                }
-
                 while (true) {
                     cout << "Select the source country" << endl;
-                    string source_country;
-                    cin >> source_country;
+                    int* source_country_index_ptr = this->print_and_return_index_country_selected();
                     cout << "Select the target country" << endl;
-                    string target_country;
-                    cin >> target_country;
+                    int* target_country_index_ptr = this->print_and_return_index_country_selected();
+                    string source_country = this->get_player_owned_countries()->at(
+                            *source_country_index_ptr - 1)->get_name();
+                    string target_country = this->get_player_owned_countries()->at(
+                            *target_country_index_ptr - 1)->get_name();
                     bool is_source_country_valid = false;
                     bool is_target_country_valid = false;
 
@@ -325,25 +319,23 @@ void Player::fortify() {
                     if (can_player_fortify_source_and_target == "Can fortify") {
 
                         while (true) {
-                            int nbr_of_armies_moved;
-                            cout << "Enter the number of armies you wish to move" << endl;
-                            cin >> nbr_of_armies_moved;
+
                             auto* source_country_ptr = new Country();
                             auto* target_country_ptr = new Country();
                             for (auto& owned_country : *owned_countries) {
                                 if (owned_country->get_name() == source_country) {
-                                    source_country_ptr = owned_country;
-                                    cout << "Armies in:" << source_country << " : "
-                                         << owned_country->get_nb_armies()
-                                         << endl; // Print nbr of army in source country
+                                    source_country_ptr = owned_country; // select source country
                                 }
                                 if (owned_country->get_name() == target_country) {
-                                    cout << "Armies in:" << target_country << " : "
-                                         << owned_country->get_nb_armies()
-                                         << endl; // Print nbr of army in target country
-                                    target_country_ptr = owned_country;
+                                    target_country_ptr = owned_country; // select target country
                                 }
                             }
+
+                            int nbr_of_armies_moved;
+                            cout << "Enter the number of armies you wish to move" << endl;
+                            cout << "Armies in source country: " << source_country_ptr->get_nb_armies() << endl;
+                            cout << "Armies in target country: " << target_country_ptr->get_nb_armies() << endl;
+                            cin >> nbr_of_armies_moved;
 
                             if (nbr_of_armies_moved > 0 && nbr_of_armies_moved < source_country_ptr->get_nb_armies()) {
                                 source_country_ptr->set_nb_armies(
@@ -357,7 +349,7 @@ void Player::fortify() {
                                      << source_country_ptr->get_name() << endl;
 
                                 cout << "There is now " << target_country_ptr->get_nb_armies() << " armies in "
-                                     << target_country_ptr->get_name();
+                                     << target_country_ptr->get_name() << endl;
                                 break;
                             } else {
                                 cout << "Invalid number of armies ! Retry." << endl;
@@ -432,4 +424,25 @@ string Player::can_player_fortify(const string& source_country, const string& ta
         }
     }
     return "Cannot fortify! Countries aren't adjacent";
+}
+
+int* Player::print_and_return_index_country_selected() {
+
+    int selection = 0;
+
+    while (selection < 1 || selection > this->get_player_owned_countries()->size()) {
+        cout << "\t" << this->get_player_name() << endl;
+        for (int k = 0; k < this->get_player_owned_countries()->size(); k++) {
+            cout << "\t \t (" << (k + 1) << ") " << this->get_player_owned_countries()->at(k)->get_name() << endl;
+        }
+
+        cin >> selection;
+        if (cin.fail() || selection < 1 || selection > this->get_player_owned_countries()->size()) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Invalid input." << endl;
+        }
+    }
+
+    return new int(selection);
 }

@@ -59,7 +59,7 @@ public:
 
     void delete_card_from_hand_and_add_it_to_deck(Deck* deck, int index);
 
-    void exchange(Deck* deck);
+    int exchange(Deck* deck);
 
     void exchange_three_same(Deck* deck, const string& type_of_card_position);
 
