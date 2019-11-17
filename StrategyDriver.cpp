@@ -9,8 +9,6 @@ int main() {
 
 	
 	Player* p = new Player("Player 1", NULL);
-	//p->setStrategy(AI);
-	p->get_strategy()->fortify();
-	//p->setStrategy(pAI);
-	p->get_strategy()->attack();
+	p->setStrategy(new Human());
+	p->fortify();
 }

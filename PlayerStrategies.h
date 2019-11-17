@@ -8,25 +8,20 @@ class Strategy{
 		virtual void fortify();
 		virtual void attack();
 		virtual void reinforce();
+		virtual int* execute_strategy();
 };
 
 class AggressiveAI : public Strategy {
 	public:
-		void fortify();
-		void attack();
-		void reinforce();
+		int* execute_strategy();
 };
 
 class PassiveAI : public Strategy {
 	public:
-		void fortify();
-		void attack();
-		void reinforce();
+		int* execute_strategy();
 };
 
 class Human : public Strategy {
 	public:
-		void fortify();
-		void attack();
-		void reinforce();
+		int* execute_strategy();
 };
