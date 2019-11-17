@@ -7,16 +7,21 @@ int main() {
     auto* loader = new MapLoader();
 
     //Loading a valid map of Canada
-    cout << "*** Reading from canada.map ***" << endl;
-    auto map = loader->read_map("../canada.map");
+    cout << endl << "*** Reading from canada.map ***" << endl;
+    auto map = loader->read_map("../Map/Maps/Domination/canada.map");
 
     validate(map);
 
     //Loading an invalid map file, without the three sections (borders, continents, countries)
-    cout << "*** Reading from invalid.map ***" << endl;
-    map = loader->read_map("../invalid.map");
+    cout << endl << "*** Reading from invalid.map ***" << endl;
+    map = loader->read_map("../Map/Maps/Domination/invalid.map");
 
     validate(map);
+
+    MapLoader* l = new ConquestAdapter();
+    cout << endl << "*** Reading from Chicago.map, the Conquest map ***" << endl;
+    auto adaptedMap = l->read_map("../Map/Maps/Conquest/Chicago.map");
+    validate(adaptedMap);
 
     return 0;
 }

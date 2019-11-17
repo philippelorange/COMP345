@@ -80,8 +80,21 @@ void Game::select_map() {
 
     //The following block will find all files ending with .map, and split up the valid from the invalid ones,
     //for the user only to be able to select a valid file.
-    auto* mapLoader = new MapLoader();
-    for (auto& p: std::filesystem::directory_iterator("../Map/Maps")) {
+    MapLoader* mapLoader = new MapLoader();
+    for (auto& p: std::filesystem::directory_iterator("../Map/Maps/Domination")) {
+        if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
+            Map* map = mapLoader->read_map(p.path());
+            if (map != nullptr && map->validate_continent_singularity() && map->validate_connected_graph()) {
+                map->set_name(p.path().filename());
+                valid_files.push_back(map);
+            } else {
+                invalid_files.push_back(p.path().filename());
+            }
+        }
+    }
+
+    mapLoader = new ConquestAdapter();
+    for (auto& p: std::filesystem::directory_iterator("../Map/Maps/Conquest")) {
         if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
             Map* map = mapLoader->read_map(p.path());
             if (map != nullptr && map->validate_continent_singularity() && map->validate_connected_graph()) {
