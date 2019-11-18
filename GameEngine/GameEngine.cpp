@@ -80,7 +80,7 @@ void Game::select_map() {
 
     //The following block will find all files ending with .map, and split up the valid from the invalid ones,
     //for the user only to be able to select a valid file.
-    MapLoader* mapLoader = new MapLoader();
+    auto* mapLoader = new MapLoader();
     for (auto& p: std::filesystem::directory_iterator("../Map/Maps/Domination")) {
         if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
             Map* map = mapLoader->read_map(p.path());
@@ -165,7 +165,11 @@ void Game::create_players() {
                 }
             }
         }
-        _players->push_back(new Player(name, this->_deck));
+
+        auto* player = new Player(name, this->_deck);
+        auto* phase_observer = new PhaseObserver(player);
+        player->attach(phase_observer);
+        _players->push_back(player);
     }
 }
 

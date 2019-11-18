@@ -19,7 +19,7 @@ public:
     explicit Card(Type* type);
 
     // getters
-    string get_type_name() const;
+    [[nodiscard]] string get_type_name() const;
 
     // factory method
     static Card* factory_card(Type* type, int type_number);
@@ -36,7 +36,7 @@ public:
     explicit Deck(vector<Card*>* cards);
 
     // getters
-    vector<Card*>* get_deck_cards() const;
+    [[nodiscard]] vector<Card*>* get_deck_cards() const;
 
     // functions
     void draw(Hand* hand);
@@ -53,7 +53,7 @@ public:
     explicit Hand();
 
     // getters
-    vector<Card*>* get_hand_cards() const;
+    [[nodiscard]] vector<Card*>* get_hand_cards() const;
 
     // functions
 

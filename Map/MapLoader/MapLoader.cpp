@@ -3,6 +3,7 @@
 #include <sstream>
 #include "MapLoader.h"
 #include "Map/Map.h"
+#include <algorithm>
 
 MapLoader::MapLoader() {}
 
