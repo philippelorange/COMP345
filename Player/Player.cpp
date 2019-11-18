@@ -179,7 +179,7 @@ void Player::attack() {
         }
 
         while (selection < 1 || selection > valid_target->size()) {
-            cout << player_name << ", please select a country to attack amongst the following countries:" << endl;
+            cout << *player_name << ", please select a country to attack amongst the following countries:" << endl;
             for (int k = 0; k < valid_target->size(); k++) {
                 cout << "\t \t (" << (k + 1) << ") " << valid_target->at(k)->get_name() << endl;
             }
@@ -272,7 +272,7 @@ void Player::attack() {
 
             if (!battle_is_over) {
                 do {
-                    cout << player_name << " do you wish to continue the attack? (y/n)" << endl;
+                    cout << *player_name << " do you wish to continue the attack? (y/n)" << endl;
                     cin >> attack_answer;
                 } while (!(attack_answer == "y" || attack_answer == "n"));
                 player_wishes_to_attack = attack_answer == "y";
@@ -284,8 +284,8 @@ void Player::attack() {
         if (attacker_won) {
             this->add_country(attack_target);
             defending_player->remove_country(attack_target->get_name());
-            cout << player_name << " has conquered " << attack_target->get_name() << endl;
-            cout << player_name << " , select the number of troops you want to move to " << attack_target->get_name()
+            cout << *player_name << " has conquered " << attack_target->get_name() << endl;
+            cout << *player_name << " , select the number of troops you want to move to " << attack_target->get_name()
                  << "(between 1 and " << (armies_in_attacking_country - 1) << ")" << endl;
             int armies_moved_to_conquered_country;
             do {
@@ -299,7 +299,7 @@ void Player::attack() {
         cout << "*** Battle is over ***" << endl;
 
         do {
-            cout << player_name << ", would you like to initiate another attack? (y/n)" << endl;
+            cout << *player_name << ", would you like to initiate another attack? (y/n)" << endl;
             cin >> answer;
         } while (!(answer == "y" || answer == "n"));
         player_wants_to_attack = answer == "y";
@@ -430,9 +430,6 @@ void Player::fortify() {
         else
             cout << "Enter a valid answer" << endl;
     }
-
-    this->notify(GamePhase::not_is_turn);
-
 }
 
 void Player::update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus) {

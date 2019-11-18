@@ -15,6 +15,7 @@ void Map::set_name(string s) {
 string Map::get_name() {
     return *name;
 }
+
 bool Map::validate_connected_graph() const {
     //To validate the map is a connected graph, we must ensure that every country is visited. We create
     //an array the size of the countries vector, and perform a DFT to navigate the graph. After all possible
@@ -77,10 +78,19 @@ vector<Country*>* Map::get_countries() {
     return countries_;
 }
 
+bool Map::player_has_been_set() {
+    for (Country* country : *this->get_countries()) {
+        if (!country->get_player()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 Continent::Continent(string name, int control_value) :
         name_(new string(name)),
         countries_(new vector<Country*>()),
-        control_value_(new int(control_value)){}
+        control_value_(new int(control_value)) {}
 
 
 string Continent::get_name() const {
@@ -203,6 +213,7 @@ void Country::set_continent(Continent* continent) {
 
 void Country::set_player(Player* player) {
     player_ = player;
+    notify();
 }
 
 void Country::add_army() {

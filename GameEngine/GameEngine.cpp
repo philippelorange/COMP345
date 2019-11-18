@@ -167,7 +167,7 @@ void Game::create_players() {
         }
 
         auto* player = new Player(name, this->_deck);
-        auto* phase_observer = new PhaseObserver(player);
+        auto* phase_observer = new ConcretePhaseObserver(player);
         player->attach(phase_observer);
         _players->push_back(player);
     }
