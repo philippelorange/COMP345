@@ -19,7 +19,7 @@ public:
 
     vector<Country*>* get_countries();
 
-    bool validate_connected_graph() const;
+    [[nodiscard]] bool validate_connected_graph() const;
 
     bool validate_continent_singularity();
 
@@ -43,11 +43,11 @@ public:
     Continent(string name, int control_value);
 
     //getters
-    string get_name() const;
+    [[nodiscard]] string get_name() const;
 
-    vector<Country*>* get_countries() const;
+    [[nodiscard]] vector<Country*>* get_countries() const;
 
-    int get_control_value() const;
+    [[nodiscard]] int get_control_value() const;
 
     bool has_country(Country*);
 
@@ -56,7 +56,7 @@ public:
 
     void add_country(Country* country) const;
 
-    bool validate_continent() const;
+    [[nodiscard]] bool validate_continent() const;
 
 private:
     string* name_;
@@ -77,15 +77,15 @@ public:
     Country(string name, Continent* continent);
 
     //getters
-    string get_name() const;
+    [[nodiscard]] string get_name() const;
 
-    Continent* get_continent() const;
+    [[nodiscard]] Continent* get_continent() const;
 
-    Player* get_player() const;
+    [[nodiscard]] Player* get_player() const;
 
-    vector<Country*>* get_adjacent_countries() const;
+    [[nodiscard]] vector<Country*>* get_adjacent_countries() const;
 
-    int get_nb_armies() const;
+    [[nodiscard]] int get_nb_armies() const;
 
     //setters
     void set_name(string name);

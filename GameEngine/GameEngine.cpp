@@ -80,7 +80,7 @@ void Game::select_map() {
 
     //The following block will find all files ending with .map, and split up the valid from the invalid ones,
     //for the user only to be able to select a valid file.
-    MapLoader* mapLoader = new MapLoader();
+    auto* mapLoader = new MapLoader();
     for (auto& p: std::filesystem::directory_iterator("../Map/Maps/Domination")) {
         if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
             Map* map = mapLoader->read_map(p.path());
@@ -165,7 +165,11 @@ void Game::create_players() {
                 }
             }
         }
-        _players->push_back(new Player(name, this->_deck));
+
+        auto* player = new Player(name, this->_deck);
+        auto* phase_observer = new PhaseObserver(player);
+        player->attach(phase_observer);
+        _players->push_back(player);
     }
 }
 
@@ -244,6 +248,8 @@ void Game::place_armies() {
             break;
     }
 
+    nb_armies = 5;
+
     //loop until the number of armies left is 0
     for (int i = 0; i < nb_armies; i++) {
         for (auto& p : *_players) {
@@ -268,36 +274,14 @@ void Game::place_armies() {
 }
 
 void Game::reinforcements_phase(Player* p) {
-    cout << "\t*** " << p->get_player_name() << "'s Reinforcements phase" << endl;
     p->reinforce();
 }
 
 void Game::attack_phase(Player* p) {
-    string player_name = p->get_player_name();
-    cout << "*** " << player_name << "'s Attack phase ***" << endl;
-    string answer;
-
-    //Check if player wants to initiate an attack
-    bool player_wants_to_attack;
-    do {
-        cout << player_name << ", do you want to attack? (y/n)" << endl;
-        cin >> answer;
-    } while (!(answer == "y" || answer == "n"));
-    player_wants_to_attack = answer == "y";
-
-    //The attack phase is a loop that prompts the user for intent to attack and calls the attack method, as long as he wishes to do so
-    while (player_wants_to_attack) {
-        p->attack();
-        do {
-            cout << player_name << ", would you like to initiate another attack? (y/n)" << endl;
-            cin >> answer;
-        } while (!(answer == "y" || answer == "n"));
-        player_wants_to_attack = answer == "y";
-    }
+    p->attack();
 }
 
 void Game::fortification_phase(Player* p) {
-    cout << "*** " << p->get_player_name() << "'s Fortification phase ***" << endl;
     p->fortify();
 }
 

@@ -29,8 +29,7 @@ Card* Card::factory_card(Type* type_ptr, int type_number) {
             *type_ptr = infantry;
         }
     }
-    Card* card = new Card(type_ptr);
-    return card;
+    return new Card(type_ptr);
 }
 
 //End of Card functions

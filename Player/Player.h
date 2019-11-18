@@ -2,11 +2,12 @@
 
 #include <vector>
 #include <string>
+#include <GameObservers/GameObservers.h>
 #include "Map/Map.h"
 #include "Cards/Cards.h"
 #include "Dice/Dice.h"
 
-class Player {
+class Player : public Observable{
 public:
     explicit Player(Deck* deck);
 

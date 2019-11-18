@@ -26,7 +26,24 @@ Player::Player(std::string player_name, Deck* deck) {
 }
 
 Player::~Player() {
-    std::cout << "player " << get_player_name() << " was removed from the game" << std::endl;
+    delete this->player_name;
+    delete this->hand;
+    delete this->deck;
+
+    for (Country* owned_country : *this->owned_countries) {
+        delete owned_country;
+    }
+    delete this->owned_countries;
+
+    for (Continent* owned_continent : *owned_continents) {
+        delete owned_continent;
+    }
+    delete this->owned_continents;
+
+    for (Dice* dice : *this->dice_container) {
+        delete dice;
+    }
+    delete this->dice_container;
 };
 
 void Player::add_country(Country* new_country) {
@@ -55,6 +72,8 @@ void Player::remove_continent(const std::string& removed_continent) {
 }
 
 void Player::reinforce() {
+
+    this->notify(GamePhase::reinforcement);
     //#countries owned/3 (rounded down)
     int* num_armies = new int(this->get_player_owned_countries()->size() / 3);
 
@@ -99,172 +118,197 @@ void Player::reinforce() {
 
 void Player::attack() {
 
-    Country* attack_source = nullptr;
-    Country* attack_target = nullptr;
-    auto* valid_sources = new vector<Country*>();
-    auto* valid_target = new vector<Country*>();
-    Player* defending_player;
+    this->notify(GamePhase::attack);
 
-    for (auto& c: *owned_countries) {
-        if (c->get_nb_armies() > 1) {
-            valid_sources->push_back(c);
-        }
-    }
-    //Checks that the player has countries from which to initiate an attack
-    if (valid_sources->empty()) {
-        cout << "You do not have any countries capable of performing an attack at this time." << endl;
-        return;
-    }
-    //Prints the list of countries that the player can attack from and prompts the user to chose among them.
-    int selection = -1;
-    while (selection < 1 || selection > valid_sources->size()) {
-        cout << this->get_player_name() << ", please select a country to attack from among the following countries:"
-             << endl;
-        for (int k = 0; k < valid_sources->size(); k++) {
-            cout << "\t \t (" << (k + 1) << ") " << valid_sources->at(k)->get_name() << endl;
-        }
-
-        cin >> selection;
-        if (cin.fail() || selection < 1 || selection > valid_sources->size()) {
-            cin.clear();
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            cout << "Invalid input." << endl;
-        }
-    }
-
-    attack_source = valid_sources->at(selection - 1);
-
-    selection = -1;
-
-    //get the target of the attack
-    //Prints the list of countries that the player can attack and prompts the user to chose among them. Checks for countries adjacent to source that are owned by other players.
-    for (Country* c :*(attack_source->get_adjacent_countries())) {
-        if (c->get_player() != this) {
-            valid_target->push_back(c);
-        }
-    }
-
-    while (selection < 1 || selection > valid_target->size()) {
-        cout << player_name << ", please select a country to attack amongst the following countries:" << endl;
-        for (int k = 0; k < valid_target->size(); k++) {
-            cout << "\t \t (" << (k + 1) << ") " << valid_target->at(k)->get_name() << endl;
-        }
-
-        cin >> selection;
-        if (cin.fail() || selection < 1 || selection > valid_target->size()) {
-            cin.clear();
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            cout << "Invalid input." << endl;
-        }
-    }
-
-    attack_target = valid_target->at(selection - 1);
-
-    defending_player = attack_target->get_player();
-
-    //Instantiating all variables that will be used in the attack process
-    bool player_wishes_to_attack = true;
-    bool battle_is_over = false;
-    bool attacker_won = false;
     string answer;
 
-    int armies_in_attacking_country = attack_source->get_nb_armies();
-    int max_number_of_dices_attack;
-    int number_of_dices_attack;
-    int armies_in_defending_country = attack_target->get_nb_armies();
-    int max_number_of_dices_defense;
-    int number_of_dices_defense;
+    //Check if player wants to initiate an attack
+    bool player_wants_to_attack;
+    do {
+        cout << (*this->player_name) << ", do you want to attack? (y/n)" << endl;
+        cin >> answer;
+    } while (!(answer == "y" || answer == "n"));
+    player_wants_to_attack = answer == "y";
 
-    //Battle loop
-    while (player_wishes_to_attack && (!battle_is_over)) {
+    //The attack phase is a loop that prompts the user for intent to attack and calls the attack method, as long as he wishes to do so
+    while (player_wants_to_attack) {
 
-        max_number_of_dices_attack = (armies_in_attacking_country <= 4) ? armies_in_attacking_country - 1 : 3;
-        max_number_of_dices_defense = (armies_in_defending_country <= 2) ? armies_in_defending_country : 2;
+        Country* attack_source = nullptr;
+        Country* attack_target = nullptr;
+        auto* valid_sources = new vector<Country*>();
+        auto* valid_target = new vector<Country*>();
+        Player* defending_player;
 
-        do {
-            cout << "How many dices do you want to attack with? (between 1 and " << max_number_of_dices_attack << ")"
+        for (auto& c: *owned_countries) {
+            if (c->get_nb_armies() > 1) {
+                valid_sources->push_back(c);
+            }
+        }
+        //Checks that the player has countries from which to initiate an attack
+        if (valid_sources->empty()) {
+            cout << "You do not have any countries capable of performing an attack at this time." << endl;
+            return;
+        }
+        //Prints the list of countries that the player can attack from and prompts the user to chose among them.
+        int selection = -1;
+        while (selection < 1 || selection > valid_sources->size()) {
+            cout << this->get_player_name() << ", please select a country to attack from among the following countries:"
                  << endl;
-            cin >> number_of_dices_attack;
-        } while (!(number_of_dices_attack > 0 && number_of_dices_attack <= max_number_of_dices_attack));
-        do {
-            cout << "How many dices does " << defending_player->get_player_name()
-                 << " want to to defend with? (between 1 and " << max_number_of_dices_defense << ")" << endl;
-            cin >> number_of_dices_defense;
-        } while (!(number_of_dices_defense > 0 && number_of_dices_defense <= max_number_of_dices_defense));
+            for (int k = 0; k < valid_sources->size(); k++) {
+                cout << "\t \t (" << (k + 1) << ") " << valid_sources->at(k)->get_name() << endl;
+            }
 
-
-        //Here goes the logic for battle, pairwise comparison of dices
-
-
-        cout << "** Starting battle **" << endl;
-
-        int number_of_comparisons = min(number_of_dices_attack, number_of_dices_defense);
-        vector<int>* attacker_rolls = Dice::sortDsc(number_of_dices_attack);
-        vector<int>* defender_rolls = Dice::sortDsc(number_of_dices_defense);
-
-        cout << "Attacker has: " << armies_in_attacking_country << " troups" << endl;
-        cout << "Defender has: " << armies_in_defending_country << " troups" << endl;
-
-        cout << "Number of dice comparisons: " << number_of_comparisons << endl;
-
-        for (int i = 0; i < number_of_comparisons; i++) {
-
-            cout << "Roll #" << (i + 1) << ": Attacker rolled a " << attacker_rolls->at(i) << ", defender rolled a "
-                 << defender_rolls->at(i) << endl;
-            if (attacker_rolls->at(i) > defender_rolls->at(i)) {
-                cout << "\tAttacker wins this roll." << endl;
-                armies_in_defending_country--;
-            } else {
-                cout << "\tDefender wins this roll." << endl;
-                armies_in_attacking_country--;
+            cin >> selection;
+            if (cin.fail() || selection < 1 || selection > valid_sources->size()) {
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                cout << "Invalid input." << endl;
             }
         }
 
-        delete attacker_rolls;
-        delete defender_rolls;
+        attack_source = valid_sources->at(selection - 1);
 
-        //Checks for battle end-contions
-        if (armies_in_attacking_country == 1)
-            battle_is_over = true;
+        selection = -1;
 
-        if (armies_in_defending_country == 0) {
-            battle_is_over = true;
-            attacker_won = true;
+        //get the target of the attack
+        //Prints the list of countries that the player can attack and prompts the user to chose among them. Checks for countries adjacent to source that are owned by other players.
+        for (Country* c :*(attack_source->get_adjacent_countries())) {
+            if (c->get_player() != this) {
+                valid_target->push_back(c);
+            }
         }
 
-        cout << "Attacker has: " << armies_in_attacking_country << " troups" << endl;
-        cout << "Defender has: " << armies_in_defending_country << " troups" << endl;
+        while (selection < 1 || selection > valid_target->size()) {
+            cout << player_name << ", please select a country to attack amongst the following countries:" << endl;
+            for (int k = 0; k < valid_target->size(); k++) {
+                cout << "\t \t (" << (k + 1) << ") " << valid_target->at(k)->get_name() << endl;
+            }
 
-        if (!battle_is_over) {
+            cin >> selection;
+            if (cin.fail() || selection < 1 || selection > valid_target->size()) {
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                cout << "Invalid input." << endl;
+            }
+        }
+
+        attack_target = valid_target->at(selection - 1);
+
+        defending_player = attack_target->get_player();
+
+        //Instantiating all variables that will be used in the attack process
+        bool player_wishes_to_attack = true;
+        bool battle_is_over = false;
+        bool attacker_won = false;
+        string attack_answer;
+
+        int armies_in_attacking_country = attack_source->get_nb_armies();
+        int max_number_of_dices_attack;
+        int number_of_dices_attack;
+        int armies_in_defending_country = attack_target->get_nb_armies();
+        int max_number_of_dices_defense;
+        int number_of_dices_defense;
+
+        //Battle loop
+        while (player_wishes_to_attack && (!battle_is_over)) {
+
+            max_number_of_dices_attack = (armies_in_attacking_country <= 4) ? armies_in_attacking_country - 1 : 3;
+            max_number_of_dices_defense = (armies_in_defending_country <= 2) ? armies_in_defending_country : 2;
+
             do {
-                cout << player_name << " do you wish to continue the attack? (y/n)" << endl;
-                cin >> answer;
-            } while (!(answer == "y" || answer == "n"));
-            player_wishes_to_attack = answer == "y";
-        }
-    }
-    //adjusts number of armies post battle
-    attack_source->set_nb_armies(armies_in_attacking_country);
-    attack_target->set_nb_armies(armies_in_defending_country);
-    if (attacker_won) {
-        this->add_country(attack_target);
-        defending_player->remove_country(attack_target->get_name());
-        cout << player_name << " has conquered " << attack_target->get_name() << endl;
-        cout << player_name << " , select the number of troops you want to move to " << attack_target->get_name()
-             << "(between 1 and " << (armies_in_attacking_country - 1) << ")" << endl;
-        int armies_moved_to_conquered_country;
-        do {
-            cin >> armies_moved_to_conquered_country;
-        } while (!(armies_moved_to_conquered_country > 0 &&
-                   armies_moved_to_conquered_country < armies_in_attacking_country));
-        attack_source->set_nb_armies((attack_source->get_nb_armies()) - armies_moved_to_conquered_country);
-        attack_target->set_nb_armies(armies_moved_to_conquered_country);
-    }
+                cout << "How many dices do you want to attack with? (between 1 and " << max_number_of_dices_attack
+                     << ")"
+                     << endl;
+                cin >> number_of_dices_attack;
+            } while (!(number_of_dices_attack > 0 && number_of_dices_attack <= max_number_of_dices_attack));
+            do {
+                cout << "How many dices does " << defending_player->get_player_name()
+                     << " want to to defend with? (between 1 and " << max_number_of_dices_defense << ")" << endl;
+                cin >> number_of_dices_defense;
+            } while (!(number_of_dices_defense > 0 && number_of_dices_defense <= max_number_of_dices_defense));
 
-    cout << "*** Battle is over ***" << endl;
+
+            //Here goes the logic for battle, pairwise comparison of dices
+
+
+            cout << "** Starting battle **" << endl;
+
+            int number_of_comparisons = min(number_of_dices_attack, number_of_dices_defense);
+            vector<int>* attacker_rolls = Dice::sortDsc(number_of_dices_attack);
+            vector<int>* defender_rolls = Dice::sortDsc(number_of_dices_defense);
+
+            cout << "Attacker has: " << armies_in_attacking_country << " troops" << endl;
+            cout << "Defender has: " << armies_in_defending_country << " troops" << endl;
+
+            cout << "Number of dice comparisons: " << number_of_comparisons << endl;
+
+            for (int i = 0; i < number_of_comparisons; i++) {
+
+                cout << "Roll #" << (i + 1) << ": Attacker rolled a " << attacker_rolls->at(i) << ", defender rolled a "
+                     << defender_rolls->at(i) << endl;
+                if (attacker_rolls->at(i) > defender_rolls->at(i)) {
+                    cout << "\tAttacker wins this roll." << endl;
+                    armies_in_defending_country--;
+                } else {
+                    cout << "\tDefender wins this roll." << endl;
+                    armies_in_attacking_country--;
+                }
+            }
+
+            delete attacker_rolls;
+            delete defender_rolls;
+
+            //Checks for battle end-conditions
+            if (armies_in_attacking_country == 1)
+                battle_is_over = true;
+
+            if (armies_in_defending_country == 0) {
+                battle_is_over = true;
+                attacker_won = true;
+            }
+
+            cout << "Attacker has: " << armies_in_attacking_country << " troops" << endl;
+            cout << "Defender has: " << armies_in_defending_country << " troops" << endl;
+
+            if (!battle_is_over) {
+                do {
+                    cout << player_name << " do you wish to continue the attack? (y/n)" << endl;
+                    cin >> attack_answer;
+                } while (!(attack_answer == "y" || attack_answer == "n"));
+                player_wishes_to_attack = attack_answer == "y";
+            }
+        }
+        //adjusts number of armies post battle
+        attack_source->set_nb_armies(armies_in_attacking_country);
+        attack_target->set_nb_armies(armies_in_defending_country);
+        if (attacker_won) {
+            this->add_country(attack_target);
+            defending_player->remove_country(attack_target->get_name());
+            cout << player_name << " has conquered " << attack_target->get_name() << endl;
+            cout << player_name << " , select the number of troops you want to move to " << attack_target->get_name()
+                 << "(between 1 and " << (armies_in_attacking_country - 1) << ")" << endl;
+            int armies_moved_to_conquered_country;
+            do {
+                cin >> armies_moved_to_conquered_country;
+            } while (!(armies_moved_to_conquered_country > 0 &&
+                       armies_moved_to_conquered_country < armies_in_attacking_country));
+            attack_source->set_nb_armies((attack_source->get_nb_armies()) - armies_moved_to_conquered_country);
+            attack_target->set_nb_armies(armies_moved_to_conquered_country);
+        }
+
+        cout << "*** Battle is over ***" << endl;
+
+        do {
+            cout << player_name << ", would you like to initiate another attack? (y/n)" << endl;
+            cin >> answer;
+        } while (!(answer == "y" || answer == "n"));
+        player_wants_to_attack = answer == "y";
+    }
 }
 
 void Player::fortify() {
+    this->notify(GamePhase::fortify);
+
     string answer;
     while (true) { // loop until exit
         cout << "What do you wish to do (fortify, exit) ?" << endl;
@@ -350,6 +394,10 @@ void Player::fortify() {
 
                                 cout << "There is now " << target_country_ptr->get_nb_armies() << " armies in "
                                      << target_country_ptr->get_name() << endl;
+
+                                delete source_country_ptr;
+                                delete target_country_ptr;
+
                                 break;
                             } else {
                                 cout << "Invalid number of armies ! Retry." << endl;
@@ -382,6 +430,8 @@ void Player::fortify() {
         else
             cout << "Enter a valid answer" << endl;
     }
+
+    this->notify(GamePhase::not_is_turn);
 
 }
 
