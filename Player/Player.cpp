@@ -125,7 +125,7 @@ void Player::attack() {
     //Check if player wants to initiate an attack
     bool player_wants_to_attack;
     do {
-        cout << player_name << ", do you want to attack? (y/n)" << endl;
+        cout << (*this->player_name) << ", do you want to attack? (y/n)" << endl;
         cin >> answer;
     } while (!(answer == "y" || answer == "n"));
     player_wants_to_attack = answer == "y";

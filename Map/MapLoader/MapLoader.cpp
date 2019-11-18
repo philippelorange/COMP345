@@ -53,7 +53,7 @@ void MapLoader::parse_continents(vector<Continent*>* continents) {
     string cur_line;
     string parsed[3];
     while (getline(*file_stream, cur_line)) {
-        if (cur_line == "\r") {
+        if (cur_line.empty() || cur_line == "\r") {
             return;
         }
 
@@ -72,7 +72,7 @@ void MapLoader::parse_countries(vector<Continent*>* continents, vector<Country*>
     string cur_line;
     string parsed[5]; //A country will have 5 elements on a line: an ID, a name, a continent ID, and x,y coordinates.
     while (getline(*file_stream, cur_line)) {
-        if (cur_line == "\r") {
+        if (cur_line.empty() || cur_line == "\r") {
             return;
         }
 
@@ -92,7 +92,7 @@ void MapLoader::parse_countries(vector<Continent*>* continents, vector<Country*>
 void MapLoader::parse_borders(vector<Country*>* countries) {
     string cur_line;
     while (getline(*file_stream, cur_line)) {
-        if (cur_line == "\r") {
+        if (cur_line.empty() || cur_line == "\r") {
             return;
         }
 
@@ -152,7 +152,7 @@ void ConquestMapLoader::parse_continents(vector<Continent *> *continents) {
     string parsed[2];
 
     while (getline(*file_stream, cur_line)) {
-        if (cur_line == "\r") {
+        if (cur_line.empty() || cur_line == "\r") {
             return;
         }
 
@@ -176,7 +176,7 @@ void ConquestMapLoader::parse_countries(vector<Continent *> *continents, vector<
     auto* border_countries = new vector<vector<string>*>();
 
     while (getline(*file_stream, cur_line)) {
-        if(cur_line == "\r") {
+        if(cur_line.empty() || cur_line == "\r") {
             continue;
         }
         int i = 0;
