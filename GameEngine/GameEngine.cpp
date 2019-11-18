@@ -8,6 +8,7 @@
 #include "Map/Map.h"
 #include "Map/MapLoader/MapLoader.h"
 #include "Player/Player.h"
+#include "PlayerStrategies.h"
 
 using namespace std;
 
@@ -24,6 +25,7 @@ void Game::game_setup() {
     select_map();
     create_deck();
     create_players();
+
 }
 
 void Game::startup_phase() {
@@ -133,8 +135,8 @@ void Game::select_map() {
 
 void Game::create_players() {
     int nb_players = -1;
-    while (nb_players < 2 || nb_players > 6) {
-        cout << "How many players want to play?" << endl;
+    while (nb_players < 2 || nb_players > 5) {
+        cout << "How many players want to play (there will one AI by default)?" << endl;
         cin >> nb_players;
         if (cin.fail() || nb_players > 6 || nb_players < 2) {
             cin.clear();
@@ -145,7 +147,7 @@ void Game::create_players() {
 
     _players = new vector<Player*>();
 
-    for (int i = 0; i < nb_players; i++) {
+    for (int i = 0; i < nb_players-1; i++) {
         string name;
         bool valid_name = false;
         while (!valid_name) {
@@ -171,6 +173,8 @@ void Game::create_players() {
         player->attach(phase_observer);
         _players->push_back(player);
     }
+    string name_ai = "default_ai";
+    _players->push_back(new Player(name_ai, this->_deck,new AggressiveAI ()));
 }
 
 void Game::create_deck() {
@@ -232,19 +236,19 @@ void Game::place_armies() {
 
     switch (_players->size()) {
         case 2 :
-            nb_armies = 40;
+            nb_armies = 5;
             break;
         case 3 :
-            nb_armies = 35;
+            nb_armies = 5;
             break;
         case 4 :
-            nb_armies = 30;
+            nb_armies = 5;
             break;
         case 5 :
-            nb_armies = 25;
+            nb_armies = 5;
             break;
         case 6 :
-            nb_armies = 20;
+            nb_armies = 5;
             break;
     }
 

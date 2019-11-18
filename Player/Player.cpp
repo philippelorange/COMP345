@@ -573,6 +573,8 @@ void Player::fortify() {
 						cout << "There is now " << target_country->get_nb_armies() << " armies in "
 							<< target_country->get_name() << endl;
 					}
+				} else {
+				    cout << this->player_name << " cannot fortify" << endl;
 				}
 			}
 		}
