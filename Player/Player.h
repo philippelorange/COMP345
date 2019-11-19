@@ -6,7 +6,7 @@
 #include "Map/Map.h"
 #include "Cards/Cards.h"
 #include "Dice/Dice.h"
-#include "PlayerStrategies.h"
+#include "PlayerStrategies/PlayerStrategies.h"
 
 
 class Player : public PhaseObservable {
