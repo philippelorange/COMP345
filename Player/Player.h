@@ -7,7 +7,7 @@
 #include "Cards/Cards.h"
 #include "Dice/Dice.h"
 
-class Player : public Observable{
+class Player : public PhaseObservable {
 public:
     explicit Player(Deck* deck);
 

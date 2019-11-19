@@ -4,30 +4,42 @@
 
 class Player;
 
+class Map;
+
 using namespace std;
 
 enum GamePhase {
-    reinforcement, attack, fortify, not_is_turn
+    reinforcement, attack, fortify
 };
 
 // Observers
 
-class GameObservers {
+class PhaseObserver {
 public:
-    ~GameObservers();
+    ~PhaseObserver();
 
     virtual void update(GamePhase game_phase) = 0;
 
 protected:
-    GameObservers();
+    PhaseObserver();
+};
+
+class StatisticObserver {
+public:
+    ~StatisticObserver();
+
+    virtual void update() = 0;
+
+protected:
+    StatisticObserver();
 };
 
 // Concrete observers
 
-class PhaseObserver : public GameObservers {
+class ConcretePhaseObserver : public PhaseObserver {
 public:
 
-    explicit PhaseObserver(Player* player);
+    explicit ConcretePhaseObserver(Player* player);
 
     void update(GamePhase game_phase) override;
 
@@ -42,22 +54,52 @@ private:
     string get_phase_string(GamePhase game_phase);
 };
 
+class ConcreteStatisticObserver : public StatisticObserver {
+public:
+
+    explicit ConcreteStatisticObserver(Map* map);
+
+    void update() override;
+
+private:
+    Map* map;
+
+    void display();
+};
+
 // Subjects
 
-class Observable {
+class PhaseObservable {
 public:
-    Observable();
+    PhaseObservable();
 
-    ~Observable();
+    ~PhaseObservable();
 
-    virtual void detach(GameObservers* observer);
+    virtual void detach(PhaseObserver* observer);
 
     virtual void notify(GamePhase game_phase);
 
-    virtual void attach(GameObservers* observer);
+    virtual void attach(PhaseObserver* observer);
 
 private:
-    list<GameObservers*>* game_observers;
+    list<PhaseObserver*>* game_observers;
+
+};
+
+class StatisticObservable {
+public:
+    StatisticObservable();
+
+    ~StatisticObservable();
+
+    virtual void detach(StatisticObserver* observer);
+
+    virtual void notify();
+
+    virtual void attach(StatisticObserver* observer);
+
+private:
+    list<StatisticObserver*>* game_stats_observers;
 
 };
 

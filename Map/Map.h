@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <GameObservers/GameObservers.h>
 
 using namespace std;
 
@@ -22,6 +23,8 @@ public:
     [[nodiscard]] bool validate_connected_graph() const;
 
     bool validate_continent_singularity();
+
+    bool player_has_been_set();
 
     void set_name(string s);
 
@@ -70,7 +73,7 @@ private:
     bool already_added(Country* country) const;
 };
 
-class Country {
+class Country : public StatisticObservable {
 public:
     Country();
 
