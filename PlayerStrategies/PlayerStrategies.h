@@ -23,6 +23,8 @@ public:
     virtual int get_defend_dice(int max_dice) = 0;
     virtual int get_armies_to_move(int max) = 0;
 
+    virtual string get_name() = 0;
+
 };
 
 class AggressiveStrategy : public Strategy {
@@ -42,6 +44,8 @@ public:
     int get_attack_dice(int max_dice) override;
     int get_defend_dice(int max_dice) override;
     int get_armies_to_move(int max) override;
+
+    string get_name() override;
 };
 
 class BenevolentStrategy : public Strategy {
@@ -61,6 +65,8 @@ public:
     int get_attack_dice(int max_dice) override;
     int get_defend_dice(int max_dice) override;
     int get_armies_to_move(int max) override;
+
+    string get_name() override;
 };
 
 class HumanStrategy : public Strategy {
@@ -80,4 +86,6 @@ public:
     int get_attack_dice(int max_dice) override;
     int get_defend_dice(int max_dice) override;
     int get_armies_to_move(int max) override;
+
+    string get_name() override;
 };

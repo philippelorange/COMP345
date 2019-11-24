@@ -4,7 +4,6 @@
 using namespace std;
 
 int main() {
-    Game *game = new Game();
-
-    game->start();
+    auto* gameEngine = new GameEngine();
+    gameEngine->start();
 }

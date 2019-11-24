@@ -14,10 +14,23 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
+Player* Game::play_tournament_game(vector<Strategy *> *strategies, Map map, int num_turns) {
+    _selected_map = &map;
+    _num_turns = &num_turns;
+    create_deck();
+    _players = new vector<Player*>();
+    for(auto& s : *strategies) {
+        _players->push_back(new Player(s->get_name(), _deck, s));
+    }
+
+    startup_phase();
+    return game_loop(num_turns);
+}
+
 void Game::start() {
     game_setup();
     startup_phase();
-    game_loop();
+    game_loop(-1);
 }
 
 void Game::game_setup() {
@@ -34,11 +47,11 @@ void Game::startup_phase() {
     place_armies();
 }
 
-void Game::game_loop() {
+Player* Game::game_loop(int num_turns) {
     cout << "*** Time to play Risk! ***" << endl << endl;
 
     bool game_over = false;
-    while (!game_over) {
+    while (!game_over && num_turns != 0) {
         for (auto& _player : *_players) {
             cout << _player->get_player_name() << ", it's your turn to play." << endl;
             reinforcements_phase(_player);
@@ -49,20 +62,20 @@ void Game::game_loop() {
                 break;
             }
         }
+        num_turns--;
     }
 
     cout << "*** The game is over! ***" << endl;
-    cout << "The champion is: " << _selected_map->get_countries()->at(0)->get_player()->get_player_name() << "!!!"
-         << endl;
-}
 
-void Game::setup_winning_game() {
-    game_setup();
-    startup_phase();
-    for (auto& c : *_selected_map->get_countries()) {
-        c->set_player(_players->at(0));
+    if(game_over) {
+        auto* winner = _selected_map->get_countries()->at(0)->get_player();
+        cout << "The champion is: " << winner->get_player_name() << "!!!"
+             << endl;
+        return winner;
+    } else {
+        cout << "Turn limit exceeded; game ended in a draw." << endl;
+        return nullptr;
     }
-    game_loop();
 }
 
 void Game::print_intro() {
@@ -299,4 +312,288 @@ vector<Player*>* Game::get_players() {
 
 Deck* Game::get_deck() {
     return _deck;
+}
+
+Tournament::Tournament() {
+    _maps = new vector<Map*>();
+    _player_strategies = new vector<Strategy*>();
+}
+
+void Tournament::start() {
+    cout << "*********************************************" << endl;
+    cout << "*                                           *" << endl;
+    cout << "*              TOURNAMENT MODE              *" << endl;
+    cout << "*                                           *" << endl;
+    cout << "*********************************************" << endl << endl;
+
+    cout << "Welcome to Tournament mode!" << endl;
+
+    select_maps();
+
+    select_players();
+
+    select_number_games();
+
+    select_number_turns();
+
+    cout << "The tournament is about to start! Here are your settings:" << endl;
+    cout << "\tMaps:" << endl;
+    for(auto& m : *_maps) {
+        cout << "\t\t" << m->get_name() << endl;
+    }
+    cout << "\tPlayers:" << endl;
+    for(auto& p : *_player_strategies) {
+        cout << "\t\t" << p->get_name() << endl;
+    }
+    cout << "\tNumber of games: " << endl << "\t\t" <<*_nb_games << endl;
+    cout << "\tNumber of turns: " << endl << "\t\t" <<*_nb_turns << endl << endl;
+
+    cout << "Press any key when you are ready to start..." << endl;
+    int x; cin >> x;
+
+    _nb_maps = new int(_maps->size());
+    _winning_players = new string*[*_nb_maps];
+    for(int i=0; i<*_nb_maps; i++) {
+        _winning_players[i] = new string[*_nb_games];
+        for(int j=0; j<*_nb_games; j++){
+            Game* game = new Game();
+            auto* winner = game->play_tournament_game(_player_strategies, *_maps->at(0), *_nb_turns);
+            if(winner == nullptr) {
+                _winning_players[i][j] = "Draw";
+            } else {
+                _winning_players[i][j] = winner->get_strategy()->get_name();
+            }
+
+            delete game;
+        }
+    }
+
+    print_results();
+}
+
+void Tournament::select_maps() {
+    cout << "Please choose the number of maps (1-5):" << endl;
+    int selection = -1;
+    while (selection < 1 || selection > 5) {
+        cin >> selection;
+        if (cin.fail() || (selection < 1 || selection > 2)) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Invalid input." << endl;
+        }
+    }
+
+    cout << "SELECTED MAPS:" << endl;
+    for(auto& m : *_maps) {
+        cout << "\t" << m->get_name() << endl;
+    }
+
+    vector<Map*> valid_files;
+    vector<string> invalid_files;
+
+    //The following block will find all files ending with .map, and split up the valid from the invalid ones,
+    //for the user only to be able to select a valid file.
+    auto* mapLoader = new MapLoader();
+    for (auto& p: std::filesystem::directory_iterator("../Map/Maps/Domination")) {
+        if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
+            Map* map = mapLoader->read_map(p.path());
+            if (map != nullptr && map->validate_continent_singularity() && map->validate_connected_graph()) {
+                map->set_name(p.path().filename());
+                valid_files.push_back(map);
+            } else {
+                invalid_files.push_back(p.path().filename());
+            }
+        }
+    }
+
+    mapLoader = new ConquestAdapter();
+    for (auto& p: std::filesystem::directory_iterator("../Map/Maps/Conquest")) {
+        if (p.path().string().substr(p.path().string().find_last_of('.') + 1) == "map") {
+            Map* map = mapLoader->read_map(p.path());
+            if (map != nullptr && map->validate_continent_singularity() && map->validate_connected_graph()) {
+                map->set_name(p.path().filename());
+                valid_files.push_back(map);
+            } else {
+                invalid_files.push_back(p.path().filename());
+            }
+        }
+    }
+
+    for(int i=0; i<selection; i++) {
+        int user_choice = -1;
+        while (user_choice < 1 || user_choice > valid_files.size()) {
+            cout << "Please select map " << (i+1) << "/" << selection << " from the following list: " << endl;
+            for (int j = 0; j < valid_files.size(); j++) {
+                cout << "(" << j + 1 << ") " << valid_files.at(j)->get_name() << endl;
+            }
+
+            if (!invalid_files.empty()) {
+                cout << endl << "Warning: The following maps were also found, but are invalid:" << endl;
+                for (auto& s : invalid_files) {
+                    cout << " - " << s << endl;
+                }
+            }
+
+            cin >> user_choice;
+            if (cin.fail() || user_choice < 1 || user_choice > valid_files.size()) {
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                cout << "Invalid input." << endl;
+            }
+        }
+        cout << "You have selected: " << valid_files.at(user_choice - 1)->get_name() << endl << endl;
+        _maps->push_back(valid_files.at(user_choice - 1));
+        valid_files.erase(valid_files.begin()+user_choice-1);
+    }
+}
+
+void Tournament::select_players() {
+    cout << "Please choose the number of players (2-4):" << endl;
+    int selection = -1;
+    while (selection < 2 || selection > 4) {
+        cin >> selection;
+        if (cin.fail() || (selection < 2 || selection > 4)) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Invalid input." << endl;
+        }
+    }
+
+    string strats[] = {"Aggressive", "Benevolent", "Random", "Cheater"};
+    vector<string> strategies(strats, strats + sizeof(strats) / sizeof(string));
+
+    for(int i=0; i<selection; i++) {
+        int user_choice = -1;
+        while (user_choice < 1 || user_choice > strategies.size()) {
+            cout << "Please select player " << (i+1) << "/" << selection << " from the following list: " << endl;
+            for (int j = 0; j < strategies.size(); j++) {
+                cout << "(" << j + 1 << ") " << strategies.at(j) << endl;
+            }
+
+            cin >> user_choice;
+            if (cin.fail() || user_choice < 1 || user_choice > strategies.size()) {
+                cin.clear();
+                cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                cout << "Invalid input." << endl;
+            }
+        }
+        auto choice = strategies.at(user_choice - 1);
+        cout << "You have selected: " << choice << endl << endl;
+        if(choice == "Aggressive") {
+            _player_strategies->push_back(new AggressiveStrategy());
+        } else if(choice == "Benevolent") {
+            _player_strategies->push_back(new BenevolentStrategy());
+        } else if(choice == "Random") {
+            //_player_strategies->push_back(new RandomStrategy());
+        } else if(choice == "Cheater") {
+            //_player_strategies->push_back(new CheaterStrategy());
+        }
+
+        strategies.erase(strategies.begin()+user_choice-1);
+    }
+}
+
+void Tournament::select_number_games() {
+    cout << "Please choose how many games are to be played on each map (1-5):" << endl;
+    int selection = -1;
+    while (selection < 1 || selection > 5) {
+        cin >> selection;
+        if (cin.fail() || (selection < 1 || selection > 5)) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Invalid input." << endl;
+        }
+    }
+
+    cout << "You have selected " << selection << " game(s)." << endl << endl;
+    _nb_games = new int(selection);
+}
+
+void Tournament::select_number_turns() {
+    cout << "Please choose how many turns are to be played each game (10-50):" << endl;
+    int selection = -1;
+    while (selection < 10 || selection > 50) {
+        cin >> selection;
+        if (cin.fail() || (selection < 10 || selection > 50)) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Invalid input." << endl;
+        }
+    }
+
+    cout << "You have selected " << selection << " turns." << endl << endl;
+    _nb_turns = new int(selection);
+}
+
+void Tournament::print_results() {
+    cout << "*********************************" << endl;
+    cout << "             RESULTS             " << endl;
+    cout << "*********************************" << endl;
+
+    cout << "M: ";
+    for(auto& m : *_maps) {
+        cout << m->get_name() << "; ";
+    }
+    cout << endl << "P: ";
+    for(auto& p : *_player_strategies) {
+        cout << p->get_name() << "; ";
+    }
+    cout << endl << "G: " << *_nb_games << endl;
+    cout << "D: " << *_nb_turns << endl;
+
+    cout << "|----------";
+    for(int i=0; i < *_nb_games; i++) {
+        cout << "-------------";
+    }
+    cout << "|" << endl;
+
+    cout << "|          ";
+    for(int i=0; i < *_nb_games; i++) {
+        cout << "| Game " << i+1 << "     ";
+    }
+    cout << "|" << endl;
+
+    cout << "|----------";
+    for(int i=0; i < *_nb_games; i++) {
+        cout << "-------------";
+    }
+    cout << "|" << endl;
+
+    for(int i=0; i<*_nb_maps; i++) {
+        cout << "| Map " << i + 1 << "    ";
+        for (int j = 0; j < *_nb_games; j++) {
+            string next_line = "| " + _winning_players[i][j];
+            cout << left << setw(13) << next_line;
+        }
+        cout << "|" << endl << "|----------";
+        for (int i = 0; i < *_nb_games; i++) {
+            cout << "-------------";
+        }
+        cout << "|" << endl;
+    }
+}
+void GameEngine::start() {
+    cout << "Welcome to Risk!" << endl << endl;
+
+    int selection = -1;
+    while (selection != 1 && selection != 2) {
+        cout << "Would you like to play a single game, or start a tournament?" << endl;
+        cout << "\t \t (1) Single Game" << endl;
+        cout << "\t \t (2) Tournament" << endl;
+
+        cin >> selection;
+        if (cin.fail() || (selection != 1 && selection != 2)) {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cout << "Invalid input." << endl;
+        }
+    }
+
+    if(selection == 1) {
+        Game* game = new Game();
+        game->start();
+    } else {
+        auto* tournament = new Tournament();
+        tournament->start();
+    }
 }

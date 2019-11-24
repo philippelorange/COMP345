@@ -94,6 +94,10 @@ int AggressiveStrategy::get_armies_to_move(int max) {
     return 1; //always move only a single army, to keep the strongest one stacked
 }
 
+string AggressiveStrategy::get_name() {
+    return "Aggressive";
+}
+
 void BenevolentStrategy::place_army(vector<Country *> *countries) {
     //Place army on the weakest army to date, to create an even distribution
     Country* weakestCountry = countries->at(0);
@@ -122,7 +126,7 @@ bool BenevolentStrategy::should_fortify() { return true; }
 
 Country* BenevolentStrategy::get_country_to_fortify(vector<Country *> *countries) {
     int min_armies = countries->at(0)->get_nb_armies();
-    Country *country_to_fortify = nullptr;
+    Country *country_to_fortify = countries->at(0);
 
     for(auto& c : *countries) {
         if(c->get_nb_armies() < min_armies) {
@@ -169,6 +173,10 @@ int BenevolentStrategy::get_defend_dice(int max_dice) {
 
 int BenevolentStrategy::get_armies_to_move(int max) {
     return 1; //wont get called
+}
+
+string BenevolentStrategy::get_name() {
+    return "Benevolent";
 }
 
 void HumanStrategy::place_army(vector<Country *> *countries) {
@@ -357,4 +365,8 @@ int HumanStrategy::get_armies_to_move(int max) {
                armies_moved_to_conquered_country <= max));
 
     return armies_moved_to_conquered_country;
+}
+
+string HumanStrategy::get_name() {
+    return "Human";
 }
