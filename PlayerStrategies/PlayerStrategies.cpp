@@ -370,3 +370,88 @@ int HumanStrategy::get_armies_to_move(int max) {
 string HumanStrategy::get_name() {
     return "Human";
 }
+
+void RandomStrategy::place_army(vector<Country *> *countries) {
+    //Find random country, and place the army there
+    int random = rand() % countries->size() + 0;
+    Country* randomCountry = countries->at(random);
+
+    randomCountry->add_army();
+}
+
+Country *RandomStrategy::get_country_to_reinforce(vector<Country *> *countries) {
+    //Find random country
+    int random = rand() % countries->size() + 0;
+    Country* randomCountry = countries->at(random);
+
+    return randomCountry;
+}
+
+bool RandomStrategy::should_fortify() {
+    return true;
+}
+
+Country *RandomStrategy::get_country_to_fortify(vector<Country *> *countries) {
+    //return random country
+    int random = rand() % countries->size() + 0;
+    Country *country_to_fortify = countries->at(random);
+
+    return country_to_fortify;
+}
+
+Country *RandomStrategy::get_fortification_source(Country *destination) {
+    int random = rand()% destination->get_adjacent_countries()->size() + 0;
+    Country* random_country = destination->get_adjacent_countries()->at(random);
+
+    return random_country;
+}
+
+int RandomStrategy::get_fortification_armies(Country *source) {
+    return source->get_nb_armies()-1;
+}
+
+bool RandomStrategy::should_attack() {
+    bool attack = false;
+    int random = rand() % 1 + 0;
+    if (random == 0){
+        attack = false;
+    }else{
+        attack = true;
+    }
+    return attack;
+}
+
+Country *RandomStrategy::get_country_to_attack_from(vector<Country *> *countries) {
+    int random = rand() % countries->size() + 0;
+    Country* random_country = countries->at(random);
+
+    return random_country;
+}
+
+Country *RandomStrategy::get_country_to_attack(vector<Country *> *countries) {
+    //finds weakest target country
+    int random = rand() % countries->size() + 0;
+    Country* attack_target = countries->at(random);
+
+    return attack_target;
+}
+
+int RandomStrategy::get_attack_dice(int max_dice) {
+    return rand() % max_dice + 1;
+}
+
+int RandomStrategy::get_defend_dice(int max_dice) {
+    return rand() % max_dice + 1;
+}
+
+int RandomStrategy::get_armies_to_move(int max) {
+    return rand() % max +1 ;
+}
+
+string RandomStrategy::get_name() {
+    return "Random";
+}
+
+
+
+

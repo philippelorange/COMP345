@@ -89,3 +89,24 @@ public:
 
     string get_name() override;
 };
+
+class RandomStrategy : public Strategy {
+public:
+    void place_army(vector<Country*>* countries) override;
+
+    Country* get_country_to_reinforce(vector<Country*>* countries) override;
+
+    bool should_fortify() override;
+    Country* get_country_to_fortify(vector<Country*>* countries) override;
+    Country* get_fortification_source(Country* destination) override;
+    int get_fortification_armies(Country* source) override;
+
+    bool should_attack() override;
+    Country* get_country_to_attack_from(vector<Country*>* countries) override;
+    Country* get_country_to_attack(vector<Country*>* countries) override;
+    int get_attack_dice(int max_dice) override;
+    int get_defend_dice(int max_dice) override;
+    int get_armies_to_move(int max) override;
+
+    string get_name() override;
+};

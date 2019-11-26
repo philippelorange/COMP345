@@ -188,7 +188,7 @@ void Game::create_players() {
     }
 
     string name_ai = "default_ai";
-    auto* player_ai = new Player(name_ai, this->_deck, new AggressiveStrategy());
+    auto* player_ai = new Player(name_ai, this->_deck, new RandomStrategy());
     auto* phase_observer_ai = new ConcretePhaseObserver(player_ai);
     player_ai->attach(phase_observer_ai);
     _players->push_back(player_ai);
@@ -484,7 +484,7 @@ void Tournament::select_players() {
         } else if(choice == "Benevolent") {
             _player_strategies->push_back(new BenevolentStrategy());
         } else if(choice == "Random") {
-            //_player_strategies->push_back(new RandomStrategy());
+            _player_strategies->push_back(new RandomStrategy());
         } else if(choice == "Cheater") {
             //_player_strategies->push_back(new CheaterStrategy());
         }
