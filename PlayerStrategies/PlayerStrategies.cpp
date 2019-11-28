@@ -42,9 +42,9 @@ Country* AggressiveStrategy::get_country_to_fortify(vector<Country *> *countries
 
 Country* AggressiveStrategy::get_fortification_source(Country *destination) {
     Country* max_country = destination->get_adjacent_countries()->at(0);
-
+    Player* destination_owner = destination->get_player();
     for(auto& c : *destination->get_adjacent_countries()) {
-        if(c->get_nb_armies() > max_country->get_nb_armies()) {
+        if(c->get_nb_armies() > max_country->get_nb_armies() && c->get_player() == destination_owner) {
             max_country = c;
         }
     }
@@ -139,9 +139,9 @@ Country* BenevolentStrategy::get_country_to_fortify(vector<Country *> *countries
 
 Country* BenevolentStrategy::get_fortification_source(Country *destination) {
     Country* min_country = destination->get_adjacent_countries()->at(0);
-
+    Player* destination_owner = destination->get_player();
     for(auto& c : *destination->get_adjacent_countries()) {
-        if(c->get_nb_armies() < min_country->get_nb_armies()) {
+        if(c->get_nb_armies() < min_country->get_nb_armies() && c->get_player() == destination_owner) {
             min_country = c;
         }
     }
@@ -248,10 +248,10 @@ Country* HumanStrategy::get_country_to_fortify(vector<Country *> *countries) {
 
 Country* HumanStrategy::get_fortification_source(Country *destination) {
     int selection = 0;
-
+    Player* destination_owner = destination->get_player();
     auto* possible_sources = new vector<Country*>();
     for(auto& c : *destination->get_adjacent_countries()) {
-        if(c->get_nb_armies() > 1) {
+        if(c->get_nb_armies() > 1 && c->get_player() == destination_owner) {
             possible_sources->push_back(c);
         }
     }

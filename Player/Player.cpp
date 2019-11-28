@@ -240,7 +240,7 @@ void Player::fortify() {
 
     for(auto& c : *owned_countries) {
         for(auto& adj : *c->get_adjacent_countries()) {
-            if(adj->get_nb_armies() >= 2) {
+            if(adj->get_nb_armies() >= 2 && adj->get_player() == this) {
                 potential_countries->push_back(c);
                 break;
             }
@@ -260,14 +260,19 @@ void Player::fortify() {
 
     int armies_to_move = strategy->get_fortification_armies(source_country);
 
-    source_country->set_nb_armies(source_country->get_nb_armies() - armies_to_move);
-    country_to_fortify->set_nb_armies(country_to_fortify->get_nb_armies() + armies_to_move);
+    if (armies_to_move > 0){
+        source_country->set_nb_armies(source_country->get_nb_armies() - armies_to_move);
+        country_to_fortify->set_nb_armies(country_to_fortify->get_nb_armies() + armies_to_move);
 
-    cout << *player_name << " has transferred " << armies_to_move << " armies from " <<
-    source_country->get_name() << " to " << country_to_fortify->get_name() << "." << endl;
+        cout << *player_name << " has transferred " << armies_to_move << " armies from " <<
+             source_country->get_name() << " to " << country_to_fortify->get_name() << "." << endl;
 
-    cout << country_to_fortify->get_name() << " has " << country_to_fortify->get_nb_armies() << " armies" << endl;
-    cout << source_country->get_name() << " has " << source_country->get_nb_armies() << " armies" << endl;
+        cout << country_to_fortify->get_name() << " has " << country_to_fortify->get_nb_armies() << " armies" << endl;
+        cout << source_country->get_name() << " has " << source_country->get_nb_armies() << " armies" << endl;
+    }
+    else{
+        cout <<this->get_player_name()<< " opted not to fortify his position"<< endl;
+    }
 }
 
 void Player::update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus) {
