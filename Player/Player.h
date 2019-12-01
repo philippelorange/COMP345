@@ -58,6 +58,4 @@ private:
     Deck* deck;
     Strategy* strategy;
     vector<Dice*>* dice_container;
-
-    int* print_and_return_index_country_selected();
 };

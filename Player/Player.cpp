@@ -272,7 +272,8 @@ void Player::fortify() {
         cout << "Source country, " << source_country->get_name() << " has :" << source_country->get_nb_armies() <<
              " armies" << endl;
 
-        cout << "Fortified country, " << country_to_fortify->get_name() << " has :" << country_to_fortify->get_nb_armies() <<
+        cout << "Fortified country, " << country_to_fortify->get_name() << " has :"
+             << country_to_fortify->get_nb_armies() <<
              " armies" << endl;
 
         int armies_to_move = strategy->get_fortification_armies(source_country);
@@ -297,25 +298,4 @@ void Player::fortify() {
 
 void Player::setStrategy(Strategy* newStrategy) {
     this->strategy = newStrategy;
-}
-
-int* Player::print_and_return_index_country_selected() {
-
-    int selection = 0;
-
-    while (selection < 1 || selection > this->get_player_owned_countries()->size()) {
-        cout << "\t" << this->get_player_name() << endl;
-        for (int k = 0; k < this->get_player_owned_countries()->size(); k++) {
-            cout << "\t \t (" << (k + 1) << ") " << this->get_player_owned_countries()->at(k)->get_name() << endl;
-        }
-
-        cin >> selection;
-        if (cin.fail() || selection < 1 || selection > this->get_player_owned_countries()->size()) {
-            cin.clear();
-            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            cout << "Invalid input." << endl;
-        }
-    }
-
-    return new int(selection);
 }

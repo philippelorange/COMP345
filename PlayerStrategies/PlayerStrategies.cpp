@@ -1,5 +1,6 @@
-#include "PlayerStrategies.h"
 #include<iostream>
+
+#include "PlayerStrategies.h"
 #include "Player/Player.h"
 
 void AggressiveStrategy::place_army(vector<Country*>* countries) {
@@ -449,7 +450,12 @@ Country* RandomStrategy::get_country_to_fortify(vector<Country*>* countries) {
 }
 
 Country* RandomStrategy::get_fortification_source(Country* destination) {
-    int random = rand() % destination->get_adjacent_countries()->size() + 0;
+    int random;
+    do {
+        random = rand() % destination->get_adjacent_countries()->size() + 0;
+    } while (destination->get_adjacent_countries()->at(random)->get_player()->get_player_name() !=
+             destination->get_player()->get_player_name()); // random country must be owned by player
+
     Country* random_country = destination->get_adjacent_countries()->at(random);
 
     return random_country;
@@ -461,7 +467,7 @@ int RandomStrategy::get_fortification_armies(Country* source) {
 
 bool RandomStrategy::should_attack() {
     bool attack = false;
-    int random = rand() % 1 + 0;
+    int random = rand() % 2 + 0;
     attack = random != 0;
     return attack;
 }
@@ -532,7 +538,7 @@ Country* CheaterStrategy::get_country_to_reinforce(vector<Country*>* countries) 
 }
 
 bool CheaterStrategy::should_fortify() {
-    return true;
+    return false;
 }
 
 Country* CheaterStrategy::get_country_to_fortify(vector<Country*>* countries) {
