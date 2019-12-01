@@ -72,12 +72,12 @@ void ConcreteStatisticObserver::display() {
         }
 
         if (players.size() == 1) {
-            cout << "CONGRATS TO " << players[0] << " FOR WINNING THE GAME !!" << endl;
+            cout << "CONGRATS TO " << players[0]->get_player_name() << " FOR WINNING THE GAME !!" << endl;
         } else {
             for (Player* player : players) {
                 double percentage =
                         (double) player->get_player_owned_countries()->size() / (double) map->get_countries()->size();
-                cout << "Player " << player->get_player_name() << " owns " << percentage << " % of all countries ! (" <<
+                cout << "Player " << player->get_player_name() << " owns " << percentage << " of all countries ! (" <<
                      player->get_player_owned_countries()->size() << "/" << map->get_countries()->size() << ")" << endl;
             }
         }

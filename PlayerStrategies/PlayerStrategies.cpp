@@ -1,5 +1,6 @@
 #include "PlayerStrategies.h"
 #include<iostream>
+#include "Player/Player.h"
 
 void AggressiveStrategy::place_army(vector<Country*>* countries) {
     //Find strongest country, and place the army there
@@ -98,6 +99,22 @@ string AggressiveStrategy::get_name() {
     return "Aggressive";
 }
 
+bool AggressiveStrategy::should_cheat() {
+    return false;
+}
+
+void AggressiveStrategy::cheat_attack(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void AggressiveStrategy::cheat_reinforce(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void AggressiveStrategy::cheat_fortify(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
 void BenevolentStrategy::place_army(vector<Country*>* countries) {
     //Place army on the weakest army to date, to create an even distribution
     Country* weakestCountry = countries->at(0);
@@ -177,6 +194,22 @@ int BenevolentStrategy::get_armies_to_move(int max) {
 
 string BenevolentStrategy::get_name() {
     return "Benevolent";
+}
+
+bool BenevolentStrategy::should_cheat() {
+    return false;
+}
+
+void BenevolentStrategy::cheat_attack(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void BenevolentStrategy::cheat_reinforce(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void BenevolentStrategy::cheat_fortify(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
 }
 
 void HumanStrategy::place_army(vector<Country*>* countries) {
@@ -371,6 +404,22 @@ string HumanStrategy::get_name() {
     return "Human";
 }
 
+bool HumanStrategy::should_cheat() {
+    return false;
+}
+
+void HumanStrategy::cheat_attack(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void HumanStrategy::cheat_reinforce(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void HumanStrategy::cheat_fortify(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
 void RandomStrategy::place_army(vector<Country*>* countries) {
     //Find random country, and place the army there
     int random = rand() % countries->size() + 0;
@@ -413,11 +462,7 @@ int RandomStrategy::get_fortification_armies(Country* source) {
 bool RandomStrategy::should_attack() {
     bool attack = false;
     int random = rand() % 1 + 0;
-    if (random == 0) {
-        attack = false;
-    } else {
-        attack = true;
-    }
+    attack = random != 0;
     return attack;
 }
 
@@ -452,6 +497,117 @@ string RandomStrategy::get_name() {
     return "Random";
 }
 
+void RandomStrategy::cheat_attack(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void RandomStrategy::cheat_reinforce(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+void RandomStrategy::cheat_fortify(Player* player) {
+    cout << this->get_name() << " cannot cheat !" << endl;
+}
+
+bool RandomStrategy::should_cheat() {
+    return false;
+}
 
 
+void CheaterStrategy::place_army(vector<Country*>* countries) {
+    // Will place army on weakest country, best strategy for cheater since he want's to double army on countries
+    Country* weakestCountry = countries->at(0);
 
+    for (int i = 1; i < countries->size(); i++) {
+        if (weakestCountry->get_nb_armies() > countries->at(i)->get_nb_armies()) {
+            weakestCountry = countries->at(i);
+        }
+    }
+
+    weakestCountry->add_army();
+}
+
+Country* CheaterStrategy::get_country_to_reinforce(vector<Country*>* countries) {
+    return nullptr;
+}
+
+bool CheaterStrategy::should_fortify() {
+    return true;
+}
+
+Country* CheaterStrategy::get_country_to_fortify(vector<Country*>* countries) {
+    return nullptr;
+}
+
+Country* CheaterStrategy::get_fortification_source(Country* destination) {
+    return nullptr;
+}
+
+int CheaterStrategy::get_fortification_armies(Country* source) {
+    return 0;
+}
+
+bool CheaterStrategy::should_attack() {
+    return false;
+}
+
+Country* CheaterStrategy::get_country_to_attack_from(vector<Country*>* countries) {
+    return nullptr;
+}
+
+Country* CheaterStrategy::get_country_to_attack(vector<Country*>* countries) {
+    return nullptr;
+}
+
+int CheaterStrategy::get_attack_dice(int max_dice) {
+    return max_dice;
+}
+
+int CheaterStrategy::get_defend_dice(int max_dice) {
+    return max_dice;
+}
+
+int CheaterStrategy::get_armies_to_move(int max) {
+    return 0;
+}
+
+string CheaterStrategy::get_name() {
+    return "Cheater";
+}
+
+bool CheaterStrategy::should_cheat() {
+    return true;
+}
+
+void CheaterStrategy::cheat_attack(Player* player) {
+    for (Country* country: *player->get_player_owned_countries()) {
+        for (Country* adj_country : *country->get_adjacent_countries()) {
+            if (adj_country->get_player()->get_player_name() != country->get_player()->get_player_name()) {
+                cout << adj_country->get_name() << " has been conquered by " << player->get_player_name() << endl;
+                adj_country->get_player()->remove_country(adj_country->get_name());
+                player->add_country(adj_country);
+            }
+        }
+    }
+}
+
+void CheaterStrategy::cheat_reinforce(Player* player) {
+    for (Country* country: *player->get_player_owned_countries()) {
+        cout << country->get_name() << " has :" << country->get_nb_armies() << " armies" << endl;
+        country->set_nb_armies(country->get_nb_armies() * 2);
+        cout << country->get_name() << " now has :" << country->get_nb_armies() << " armies" << endl;
+    }
+}
+
+void CheaterStrategy::cheat_fortify(Player* player) {
+    for (Country* country: *player->get_player_owned_countries()) {
+        for (Country* adj_country : *country->get_adjacent_countries()) {
+            if (adj_country->get_player()->get_player_name() != country->get_player()->get_player_name()) {
+                cout << country->get_name() << " has :" << country->get_nb_armies() << " armies" << endl;
+                country->set_nb_armies(country->get_nb_armies() * 2);
+                cout << country->get_name() << " now has :" << country->get_nb_armies() << " armies" << endl;
+                break;
+            }
+        }
+    }
+}
