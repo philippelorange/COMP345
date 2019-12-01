@@ -189,7 +189,7 @@ void Game::create_players() {
     }
 
     string name_ai = "default_ai";
-    auto* player_ai = new Player(name_ai, this->_deck, new CheaterStrategy());
+    auto* player_ai = new Player(name_ai, this->_deck, new RandomStrategy());
     auto* phase_observer_ai = new ConcretePhaseObserver(player_ai);
     player_ai->attach(phase_observer_ai);
     _players->push_back(player_ai);
