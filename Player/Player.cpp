@@ -111,22 +111,23 @@ void Player::reinforce() {
         country_to_reinforce->add_army();
 
         cout << *player_name << " has placed an army at " << country_to_reinforce->get_name() << "." << endl;
-        cout << country_to_reinforce->get_name() << " has " << country_to_reinforce->get_nb_armies() << " armies" << endl;
+        cout << country_to_reinforce->get_name() << " has " << country_to_reinforce->get_nb_armies() << " armies"
+             << endl;
     }
 }
 
 void Player::attack() {
     this->notify(GamePhase::attack);
 
-    while(strategy->should_attack()) {
+    while (strategy->should_attack()) {
         cout << *player_name << " has chosen to attack!" << endl;
 
-        auto *countries_to_attack_from = new vector<Country *>();
+        auto* countries_to_attack_from = new vector<Country*>();
 
-        for (auto &c : *owned_countries) {
+        for (auto& c : *owned_countries) {
             if (c->get_nb_armies() >= 2) {
-                for(auto& adj : *c->get_adjacent_countries()) {
-                    if(adj->get_nb_armies() > 0 & adj->get_player() != this) {
+                for (auto& adj : *c->get_adjacent_countries()) {
+                    if (adj->get_nb_armies() > 0 & adj->get_player() != this) {
                         countries_to_attack_from->push_back(c);
                     }
                 }
@@ -138,18 +139,18 @@ void Player::attack() {
             return;
         }
 
-        auto *country_to_attack_from = strategy->get_country_to_attack_from(countries_to_attack_from);
+        auto* country_to_attack_from = strategy->get_country_to_attack_from(countries_to_attack_from);
 
-        auto *valid_targets = new vector<Country *>();
-        for (Country *c : *(country_to_attack_from->get_adjacent_countries())) {
+        auto* valid_targets = new vector<Country*>();
+        for (Country* c : *(country_to_attack_from->get_adjacent_countries())) {
             if (c->get_player() != this) {
                 valid_targets->push_back(c);
             }
         }
 
-        Country *country_to_attack = strategy->get_country_to_attack(valid_targets);
+        Country* country_to_attack = strategy->get_country_to_attack(valid_targets);
 
-        auto *defending_player = country_to_attack->get_player();
+        auto* defending_player = country_to_attack->get_player();
 
         //Instantiating all variables that will be used in the attack process
         bool player_wishes_to_attack = true;
@@ -177,8 +178,8 @@ void Player::attack() {
             cout << "** Starting battle **" << endl;
 
             int number_of_comparisons = min(number_of_dices_attack, number_of_dices_defense);
-            vector<int> *attacker_rolls = Dice::sortDsc(number_of_dices_attack);
-            vector<int> *defender_rolls = Dice::sortDsc(number_of_dices_defense);
+            vector<int>* attacker_rolls = Dice::sortDsc(number_of_dices_attack);
+            vector<int>* defender_rolls = Dice::sortDsc(number_of_dices_defense);
 
             cout << "Attacker has: " << armies_in_attacking_country << " troops" << endl;
             cout << "Defender has: " << armies_in_defending_country << " troops" << endl;
@@ -238,21 +239,21 @@ void Player::fortify() {
     //get countries that have at least one neighbor with two armies or more
     auto* potential_countries = new vector<Country*>();
 
-    for(auto& c : *owned_countries) {
-        for(auto& adj : *c->get_adjacent_countries()) {
-            if(adj->get_nb_armies() >= 2 && adj->get_player() == this) {
+    for (auto& c : *owned_countries) {
+        for (auto& adj : *c->get_adjacent_countries()) {
+            if (adj->get_nb_armies() >= 2 && adj->get_player() == this) {
                 potential_countries->push_back(c);
                 break;
             }
         }
     }
 
-    if(potential_countries->empty()) {
+    if (potential_countries->empty()) {
         cout << "You do not have enough countries and armies to fortify." << endl;
         return;
     }
 
-    if(!strategy->should_fortify()) return;
+    if (!strategy->should_fortify()) return;
 
     auto* country_to_fortify = strategy->get_country_to_fortify(potential_countries);
 
@@ -260,7 +261,7 @@ void Player::fortify() {
 
     int armies_to_move = strategy->get_fortification_armies(source_country);
 
-    if (armies_to_move > 0){
+    if (armies_to_move > 0) {
         source_country->set_nb_armies(source_country->get_nb_armies() - armies_to_move);
         country_to_fortify->set_nb_armies(country_to_fortify->get_nb_armies() + armies_to_move);
 
@@ -269,9 +270,8 @@ void Player::fortify() {
 
         cout << country_to_fortify->get_name() << " has " << country_to_fortify->get_nb_armies() << " armies" << endl;
         cout << source_country->get_name() << " has " << source_country->get_nb_armies() << " armies" << endl;
-    }
-    else{
-        cout <<this->get_player_name()<< " opted not to fortify his position"<< endl;
+    } else {
+        cout << this->get_player_name() << " opted not to fortify his position" << endl;
     }
 }
 

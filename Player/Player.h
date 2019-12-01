@@ -15,7 +15,7 @@ public:
 
     Player(std::string name, Deck* deck);
 
-	Player(std::string player_name, Deck* deck, Strategy* newStrategy);
+    Player(std::string player_name, Deck* deck, Strategy* newStrategy);
 
     ~Player();
 
@@ -35,7 +35,7 @@ public:
 
     [[nodiscard]] Hand* get_hand() const { return this->hand; };
 
-	Strategy* get_strategy() const { return this->strategy; };
+    Strategy* get_strategy() const { return this->strategy; };
 
     [[nodiscard]] vector<Dice*>* get_dice_container() const { return this->dice_container; };
 
@@ -47,7 +47,7 @@ public:
 
     void update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus);
 
-	void setStrategy(Strategy *newStrategy);
+    void setStrategy(Strategy* newStrategy);
 
 
 private:
@@ -56,7 +56,7 @@ private:
     vector<Continent*>* owned_continents;
     Hand* hand;
     Deck* deck;
-	Strategy* strategy;
+    Strategy* strategy;
     vector<Dice*>* dice_container;
 
     int* print_and_return_index_country_selected();

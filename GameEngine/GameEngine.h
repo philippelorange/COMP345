@@ -5,7 +5,7 @@
 class Game {
 public:
 
-    Player* play_tournament_game(vector<Strategy *> *strategies, Map map, int num_turns);
+    Player* play_tournament_game(vector<Strategy*>* strategies, Map map, int num_turns);
 
     void start();
 
@@ -57,7 +57,9 @@ private:
 class Tournament {
 public:
     Tournament();
+
     void start();
+
 private:
     vector<Map*>* _maps;
     vector<Strategy*>* _player_strategies;
@@ -67,8 +69,11 @@ private:
     string** _winning_players;
 
     void select_maps();
+
     void select_players();
+
     void select_number_games();
+
     void select_number_turns();
 
     void print_results();

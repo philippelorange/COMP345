@@ -1,7 +1,7 @@
 #include "PlayerStrategies.h"
 #include<iostream>
 
-void AggressiveStrategy::place_army(vector<Country *> *countries) {
+void AggressiveStrategy::place_army(vector<Country*>* countries) {
     //Find strongest country, and place the army there
     Country* strongestCountry = countries->at(0);
     for (int i = 1; i < countries->size(); i++) {
@@ -13,7 +13,7 @@ void AggressiveStrategy::place_army(vector<Country *> *countries) {
     strongestCountry->add_army();
 }
 
-Country* AggressiveStrategy::get_country_to_reinforce(vector<Country *>* countries) {
+Country* AggressiveStrategy::get_country_to_reinforce(vector<Country*>* countries) {
     //Find strongest country
     Country* strongestCountry = countries->at(0);
     for (int i = 1; i < countries->size(); i++) {
@@ -27,12 +27,12 @@ Country* AggressiveStrategy::get_country_to_reinforce(vector<Country *>* countri
 
 bool AggressiveStrategy::should_fortify() { return true; }
 
-Country* AggressiveStrategy::get_country_to_fortify(vector<Country *> *countries) {
+Country* AggressiveStrategy::get_country_to_fortify(vector<Country*>* countries) {
     //get countries that have at least one neighbor with two armies or more
-    Country *country_to_fortify = countries->at(0);
+    Country* country_to_fortify = countries->at(0);
 
-    for(auto& c : *countries) {
-        if(c->get_nb_armies() > country_to_fortify->get_nb_armies()) {
+    for (auto& c : *countries) {
+        if (c->get_nb_armies() > country_to_fortify->get_nb_armies()) {
             country_to_fortify = c;
         }
     }
@@ -40,11 +40,11 @@ Country* AggressiveStrategy::get_country_to_fortify(vector<Country *> *countries
     return country_to_fortify;
 }
 
-Country* AggressiveStrategy::get_fortification_source(Country *destination) {
+Country* AggressiveStrategy::get_fortification_source(Country* destination) {
     Country* max_country = destination->get_adjacent_countries()->at(0);
     Player* destination_owner = destination->get_player();
-    for(auto& c : *destination->get_adjacent_countries()) {
-        if(c->get_nb_armies() > max_country->get_nb_armies() && c->get_player() == destination_owner) {
+    for (auto& c : *destination->get_adjacent_countries()) {
+        if (c->get_nb_armies() > max_country->get_nb_armies() && c->get_player() == destination_owner) {
             max_country = c;
         }
     }
@@ -52,8 +52,8 @@ Country* AggressiveStrategy::get_fortification_source(Country *destination) {
     return max_country;
 }
 
-int AggressiveStrategy::get_fortification_armies(Country *source) {
-    return source->get_nb_armies()-1;
+int AggressiveStrategy::get_fortification_armies(Country* source) {
+    return source->get_nb_armies() - 1;
 }
 
 bool AggressiveStrategy::should_attack() { return true; }
@@ -61,8 +61,8 @@ bool AggressiveStrategy::should_attack() { return true; }
 Country* AggressiveStrategy::get_country_to_attack_from(vector<Country*>* countries) {
     Country* max_country = countries->at(0);
 
-    for(auto& c : *countries) {
-        if(c->get_nb_armies() > max_country->get_nb_armies()) {
+    for (auto& c : *countries) {
+        if (c->get_nb_armies() > max_country->get_nb_armies()) {
             max_country = c;
         }
     }
@@ -98,7 +98,7 @@ string AggressiveStrategy::get_name() {
     return "Aggressive";
 }
 
-void BenevolentStrategy::place_army(vector<Country *> *countries) {
+void BenevolentStrategy::place_army(vector<Country*>* countries) {
     //Place army on the weakest army to date, to create an even distribution
     Country* weakestCountry = countries->at(0);
     for (int i = 1; i < countries->size(); i++) {
@@ -110,7 +110,7 @@ void BenevolentStrategy::place_army(vector<Country *> *countries) {
     weakestCountry->add_army();
 }
 
-Country* BenevolentStrategy::get_country_to_reinforce(vector<Country *> *countries) {
+Country* BenevolentStrategy::get_country_to_reinforce(vector<Country*>* countries) {
     //Find weakest country
     Country* weakestCountry = countries->at(0);
     for (int i = 1; i < countries->size(); i++) {
@@ -124,12 +124,12 @@ Country* BenevolentStrategy::get_country_to_reinforce(vector<Country *> *countri
 
 bool BenevolentStrategy::should_fortify() { return true; }
 
-Country* BenevolentStrategy::get_country_to_fortify(vector<Country *> *countries) {
+Country* BenevolentStrategy::get_country_to_fortify(vector<Country*>* countries) {
     int min_armies = countries->at(0)->get_nb_armies();
-    Country *country_to_fortify = countries->at(0);
+    Country* country_to_fortify = countries->at(0);
 
-    for(auto& c : *countries) {
-        if(c->get_nb_armies() < min_armies) {
+    for (auto& c : *countries) {
+        if (c->get_nb_armies() < min_armies) {
             country_to_fortify = c;
         }
     }
@@ -137,11 +137,11 @@ Country* BenevolentStrategy::get_country_to_fortify(vector<Country *> *countries
     return country_to_fortify;
 }
 
-Country* BenevolentStrategy::get_fortification_source(Country *destination) {
+Country* BenevolentStrategy::get_fortification_source(Country* destination) {
     Country* min_country = destination->get_adjacent_countries()->at(0);
     Player* destination_owner = destination->get_player();
-    for(auto& c : *destination->get_adjacent_countries()) {
-        if(c->get_nb_armies() < min_country->get_nb_armies() && c->get_player() == destination_owner) {
+    for (auto& c : *destination->get_adjacent_countries()) {
+        if (c->get_nb_armies() < min_country->get_nb_armies() && c->get_player() == destination_owner) {
             min_country = c;
         }
     }
@@ -149,8 +149,8 @@ Country* BenevolentStrategy::get_fortification_source(Country *destination) {
     return min_country;
 }
 
-int BenevolentStrategy::get_fortification_armies(Country *source) {
-    return source->get_nb_armies()-1;
+int BenevolentStrategy::get_fortification_armies(Country* source) {
+    return source->get_nb_armies() - 1;
 }
 
 bool BenevolentStrategy::should_attack() { return false; }
@@ -179,7 +179,7 @@ string BenevolentStrategy::get_name() {
     return "Benevolent";
 }
 
-void HumanStrategy::place_army(vector<Country *> *countries) {
+void HumanStrategy::place_army(vector<Country*>* countries) {
     int selection = -1;
     while (selection < 1 || selection > countries->size()) {
         cout << "\t, Please place an army." << endl;
@@ -199,7 +199,7 @@ void HumanStrategy::place_army(vector<Country *> *countries) {
     countries->at(selection - 1)->add_army();
 }
 
-Country* HumanStrategy::get_country_to_reinforce(vector<Country *> *countries) {
+Country* HumanStrategy::get_country_to_reinforce(vector<Country*>* countries) {
     int selection = 0;
     while (selection < 1 || selection > countries->size()) {
         cout << "\t" << "Please place an army amongst the following options:" << endl;
@@ -220,7 +220,7 @@ Country* HumanStrategy::get_country_to_reinforce(vector<Country *> *countries) {
 bool HumanStrategy::should_fortify() {
     string answer;
 
-    while(answer != "yes" && answer != "no") {
+    while (answer != "yes" && answer != "no") {
         cout << "Would you like to fortify a country? (yes/no)" << endl;
         cin >> answer;
     }
@@ -228,7 +228,7 @@ bool HumanStrategy::should_fortify() {
     return answer == "yes";
 }
 
-Country* HumanStrategy::get_country_to_fortify(vector<Country *> *countries) {
+Country* HumanStrategy::get_country_to_fortify(vector<Country*>* countries) {
     int selection = 0;
 
     while (selection < 1 || selection > countries->size()) {
@@ -246,12 +246,12 @@ Country* HumanStrategy::get_country_to_fortify(vector<Country *> *countries) {
     return countries->at(selection - 1);
 }
 
-Country* HumanStrategy::get_fortification_source(Country *destination) {
+Country* HumanStrategy::get_fortification_source(Country* destination) {
     int selection = 0;
     Player* destination_owner = destination->get_player();
     auto* possible_sources = new vector<Country*>();
-    for(auto& c : *destination->get_adjacent_countries()) {
-        if(c->get_nb_armies() > 1 && c->get_player() == destination_owner) {
+    for (auto& c : *destination->get_adjacent_countries()) {
+        if (c->get_nb_armies() > 1 && c->get_player() == destination_owner) {
             possible_sources->push_back(c);
         }
     }
@@ -271,13 +271,13 @@ Country* HumanStrategy::get_fortification_source(Country *destination) {
     return possible_sources->at(selection - 1);
 }
 
-int HumanStrategy::get_fortification_armies(Country *source) {
+int HumanStrategy::get_fortification_armies(Country* source) {
     int selection = 0;
 
-    while (selection < 1 || selection > source->get_nb_armies()-1) {
+    while (selection < 1 || selection > source->get_nb_armies() - 1) {
         cout << "Please select how many armies you would like to transfer: " << endl;
         cin >> selection;
-        if (cin.fail() || selection < 1 || selection > source->get_nb_armies()-1) {
+        if (cin.fail() || selection < 1 || selection > source->get_nb_armies() - 1) {
             cin.clear();
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             cout << "Invalid input." << endl;
@@ -296,7 +296,7 @@ bool HumanStrategy::should_attack() {
     return answer == "yes";
 }
 
-Country* HumanStrategy::get_country_to_attack_from(vector<Country *> *countries) {
+Country* HumanStrategy::get_country_to_attack_from(vector<Country*>* countries) {
     //Prints the list of countries that the player can attack from and prompts the user to chose among them.
     int selection = -1;
     while (selection < 1 || selection > countries->size()) {
@@ -316,7 +316,7 @@ Country* HumanStrategy::get_country_to_attack_from(vector<Country *> *countries)
     return countries->at(selection - 1);
 }
 
-Country* HumanStrategy::get_country_to_attack(vector<Country *> *countries) {
+Country* HumanStrategy::get_country_to_attack(vector<Country*>* countries) {
     int selection = -1;
 
     while (selection < 1 || selection > countries->size()) {
@@ -371,7 +371,7 @@ string HumanStrategy::get_name() {
     return "Human";
 }
 
-void RandomStrategy::place_army(vector<Country *> *countries) {
+void RandomStrategy::place_army(vector<Country*>* countries) {
     //Find random country, and place the army there
     int random = rand() % countries->size() + 0;
     Country* randomCountry = countries->at(random);
@@ -379,7 +379,7 @@ void RandomStrategy::place_army(vector<Country *> *countries) {
     randomCountry->add_army();
 }
 
-Country *RandomStrategy::get_country_to_reinforce(vector<Country *> *countries) {
+Country* RandomStrategy::get_country_to_reinforce(vector<Country*>* countries) {
     //Find random country
     int random = rand() % countries->size() + 0;
     Country* randomCountry = countries->at(random);
@@ -391,44 +391,44 @@ bool RandomStrategy::should_fortify() {
     return true;
 }
 
-Country *RandomStrategy::get_country_to_fortify(vector<Country *> *countries) {
+Country* RandomStrategy::get_country_to_fortify(vector<Country*>* countries) {
     //return random country
     int random = rand() % countries->size() + 0;
-    Country *country_to_fortify = countries->at(random);
+    Country* country_to_fortify = countries->at(random);
 
     return country_to_fortify;
 }
 
-Country *RandomStrategy::get_fortification_source(Country *destination) {
-    int random = rand()% destination->get_adjacent_countries()->size() + 0;
+Country* RandomStrategy::get_fortification_source(Country* destination) {
+    int random = rand() % destination->get_adjacent_countries()->size() + 0;
     Country* random_country = destination->get_adjacent_countries()->at(random);
 
     return random_country;
 }
 
-int RandomStrategy::get_fortification_armies(Country *source) {
-    return source->get_nb_armies()-1;
+int RandomStrategy::get_fortification_armies(Country* source) {
+    return source->get_nb_armies() - 1;
 }
 
 bool RandomStrategy::should_attack() {
     bool attack = false;
     int random = rand() % 1 + 0;
-    if (random == 0){
+    if (random == 0) {
         attack = false;
-    }else{
+    } else {
         attack = true;
     }
     return attack;
 }
 
-Country *RandomStrategy::get_country_to_attack_from(vector<Country *> *countries) {
+Country* RandomStrategy::get_country_to_attack_from(vector<Country*>* countries) {
     int random = rand() % countries->size() + 0;
     Country* random_country = countries->at(random);
 
     return random_country;
 }
 
-Country *RandomStrategy::get_country_to_attack(vector<Country *> *countries) {
+Country* RandomStrategy::get_country_to_attack(vector<Country*>* countries) {
     //finds weakest target country
     int random = rand() % countries->size() + 0;
     Country* attack_target = countries->at(random);
@@ -445,7 +445,7 @@ int RandomStrategy::get_defend_dice(int max_dice) {
 }
 
 int RandomStrategy::get_armies_to_move(int max) {
-    return rand() % max +1 ;
+    return rand() % max + 1;
 }
 
 string RandomStrategy::get_name() {
