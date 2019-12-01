@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <random>
 #include <numeric>
+#include <iomanip>
 
 #include "GameEngine.h"
 #include "Map/Map.h"
@@ -188,7 +189,7 @@ void Game::create_players() {
     }
 
     string name_ai = "default_ai";
-    auto* player_ai = new Player(name_ai, this->_deck, new RandomStrategy());
+    auto* player_ai = new Player(name_ai, this->_deck, new CheaterStrategy());
     auto* phase_observer_ai = new ConcretePhaseObserver(player_ai);
     player_ai->attach(phase_observer_ai);
     _players->push_back(player_ai);
@@ -253,19 +254,19 @@ void Game::place_armies() {
 
     switch (_players->size()) {
         case 2 :
-            nb_armies = 5;
+            nb_armies = 40;
             break;
         case 3 :
-            nb_armies = 5;
+            nb_armies = 35;
             break;
         case 4 :
-            nb_armies = 5;
+            nb_armies = 30;
             break;
         case 5 :
-            nb_armies = 5;
+            nb_armies = 25;
             break;
         case 6 :
-            nb_armies = 5;
+            nb_armies = 20;
             break;
     }
 
@@ -488,7 +489,7 @@ void Tournament::select_players() {
         } else if (choice == "Random") {
             _player_strategies->push_back(new RandomStrategy());
         } else if (choice == "Cheater") {
-            //_player_strategies->push_back(new CheaterStrategy());
+            _player_strategies->push_back(new CheaterStrategy());
         }
 
         strategies.erase(strategies.begin() + user_choice - 1);

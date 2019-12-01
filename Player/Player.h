@@ -8,6 +8,8 @@
 #include "Dice/Dice.h"
 #include "PlayerStrategies/PlayerStrategies.h"
 
+class Strategy;
+
 
 class Player : public PhaseObservable {
 public:
@@ -35,7 +37,7 @@ public:
 
     [[nodiscard]] Hand* get_hand() const { return this->hand; };
 
-    Strategy* get_strategy() const { return this->strategy; };
+    [[nodiscard]] Strategy* get_strategy() const { return this->strategy; };
 
     [[nodiscard]] vector<Dice*>* get_dice_container() const { return this->dice_container; };
 
@@ -44,8 +46,6 @@ public:
     void attack();
 
     void fortify(); //handles the movement of troops into owned territories
-
-    void update_bonus(int new_cards_bonus, int new_countries_bonus, int new_continents_bonus);
 
     void setStrategy(Strategy* newStrategy);
 
