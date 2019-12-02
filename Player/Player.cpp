@@ -119,7 +119,6 @@ void Player::reinforce() {
         strategy->cheat_reinforce(this);
     }
 }
-
 void Player::attack() {
     this->notify(GamePhase::attack);
 
