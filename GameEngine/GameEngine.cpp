@@ -303,7 +303,10 @@ void Game::reinforcements_phase(Player* p) {
 }
 
 void Game::attack_phase(Player* p) {
+    int owned_countries_before_attack = p->get_player_owned_countries()->size();
     p->attack();
+    if (p->get_player_owned_countries()->size() > owned_countries_before_attack)
+        _deck->draw(p->get_hand());
 }
 
 void Game::fortification_phase(Player* p) {

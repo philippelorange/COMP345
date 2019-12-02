@@ -115,30 +115,9 @@ int Hand::exchange(Deck* deck) {
 
     if ((infantry_counter > 0 && cavalry_counter > 0 && artillery_counter > 0)) // Player has 1 of each
     {
-        if (infantry_counter == 3 || cavalry_counter == 3 ||
-            artillery_counter == 3) { // Player has 1 of each and 3 different card
-
-            string answer;
-
-            while (true) {
-                cout << "You have 3 cards of the same type and 3 cards of type different, what do you want to do? "
-                        "(same, different)" << endl;
-                cin >> answer;
-                if (answer == "same" || answer == "different") {
-                    if (answer == "same") // player decide to exchange 3 same cards
-                        this->find_and_exchange_which_card_is_highest(deck, infantry_counter, cavalry_counter);
-                    else
-                        this->exchange_three_different(deck); // player decide to exchange 3 different cards
-                    break;
-                } else
-                    cout << "Enter a valid answer" << endl;
-            }
-        } else
-            this->exchange_three_different(deck);
-
-    } else if (infantry_counter > 2 || cavalry_counter > 2 || artillery_counter > 2) { // Player has 3 different
+        this->exchange_three_different(deck);
+    } else if (infantry_counter > 2 || cavalry_counter > 2 || artillery_counter > 2) { // Player has 3 same
         this->find_and_exchange_which_card_is_highest(deck, infantry_counter, cavalry_counter);
-
     } else {
         cout << "Conditions aren't met for you to exchange cards..." << endl;
         return 0;
