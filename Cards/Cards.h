@@ -18,6 +18,8 @@ public:
     // constructor
     explicit Card(Type* type);
 
+    ~Card();
+
     // getters
     [[nodiscard]] string get_type_name() const;
 
@@ -35,6 +37,8 @@ public:
     // constructor
     explicit Deck(vector<Card*>* cards);
 
+    ~Deck();
+
     // getters
     [[nodiscard]] vector<Card*>* get_deck_cards() const;
 
@@ -51,6 +55,8 @@ private:
 class Hand {
 public:
     explicit Hand();
+
+    ~Hand();
 
     // getters
     [[nodiscard]] vector<Card*>* get_hand_cards() const;

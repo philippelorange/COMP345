@@ -16,6 +16,8 @@ class Map {
 public:
     Map();
 
+    ~Map();
+
     Map(vector<Continent*>* continents, vector<Country*>* countries);
 
     vector<Country*>* get_countries();
@@ -44,6 +46,8 @@ private:
 class Continent {
 public:
     Continent(string name, int control_value);
+
+    ~Continent();
 
     //getters
     [[nodiscard]] string get_name() const;
@@ -76,6 +80,8 @@ private:
 class Country : public StatisticObservable {
 public:
     Country();
+
+    ~Country();
 
     Country(string name, Continent* continent);
 
