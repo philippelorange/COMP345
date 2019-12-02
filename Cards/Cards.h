@@ -42,6 +42,12 @@ public:
     // getters
     [[nodiscard]] vector<Card*>* get_deck_cards() const;
 
+    [[nodiscard]] int* get_exchange_counter() const;
+
+    //setter
+
+    void set_exchange_counter(int counter);
+
     // functions
     void draw(Hand* hand);
 
@@ -50,6 +56,7 @@ public:
 private:
     // attributes
     vector<Card*>* deck_cards_;
+    int* exchange_counter;
 };
 
 class Hand {

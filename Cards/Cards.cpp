@@ -41,6 +41,7 @@ Card::~Card() {
 //Beginning of Deck functions
 Deck::Deck(vector<Card*>* cards) {
     deck_cards_ = cards;
+    this->exchange_counter = new int(0);
 }
 
 void Deck::draw(Hand* hand) {
@@ -73,6 +74,15 @@ Deck::~Deck() {
         delete card;
     }
     delete deck_cards_;
+}
+
+int* Deck::get_exchange_counter() const {
+    return exchange_counter;
+}
+
+void Deck::set_exchange_counter(int counter) {
+    this->exchange_counter = new int(counter);
+
 }
 //End of Deck functions
 
@@ -124,8 +134,7 @@ int Hand::exchange(Deck* deck) {
     }
 
     int nbr_armies = 0;
-    static int exchange_counter = 0; // static counter for armies
-    switch (exchange_counter) {
+    switch (*deck->get_exchange_counter()) {
         case 0:
             nbr_armies = 4;
             break;
@@ -145,9 +154,9 @@ int Hand::exchange(Deck* deck) {
             nbr_armies = 15;
             break;
     }
-    exchange_counter++;
-    if (nbr_armies > 14) {
-        return nbr_armies + (exchange_counter * 5);
+    deck->set_exchange_counter(*deck->get_exchange_counter() + 1);
+    if (*deck->get_exchange_counter() > 6) {
+        return nbr_armies + ((*deck->get_exchange_counter() - 6) * 5);
     } else { return nbr_armies; }
 
 }
