@@ -37,6 +37,8 @@ public:
 
     Deck* get_deck();
 
+    void remove_player(Player* removed_player);
+
 private:
     static void print_intro();
 

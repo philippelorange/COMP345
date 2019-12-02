@@ -21,7 +21,15 @@ Player* Game::play_tournament_game(vector<Strategy*>* strategies, Map map, int n
     create_deck();
     _players = new vector<Player*>();
     for (auto& s : *strategies) {
-        _players->push_back(new Player(s->get_name(), _deck, s));
+        auto* player = new Player(s->get_name(), this->_deck, s);
+        auto* phase_observer = new ConcretePhaseObserver(player);
+        _players->push_back(player);
+        player->attach(phase_observer);
+    }
+
+    for (Country* country : *_selected_map->get_countries()) { // reset country characteristic once a game start
+        country->set_nb_armies(1);
+        country->set_player(nullptr);
     }
 
     startup_phase();
@@ -54,9 +62,17 @@ Player* Game::game_loop(int num_turns) {
     bool game_over = false;
     while (!game_over && num_turns != 0) {
         for (auto& _player : *_players) {
+            if (_player->get_player_owned_countries()->empty()) { // Check if player has been eliminated
+                this->remove_player(_player);
+                continue;
+            }
             cout << _player->get_player_name() << ", it's your turn to play." << endl;
             reinforcements_phase(_player);
             attack_phase(_player);
+            if (_player->get_player_owned_countries()->empty()) { // Check if player has been eliminated
+                this->remove_player(_player);
+                continue;
+            }
             fortification_phase(_player);
             if (has_victory()) {
                 game_over = true;
@@ -316,6 +332,14 @@ Deck* Game::get_deck() {
     return _deck;
 }
 
+void Game::remove_player(Player* removed_player) {
+    for (int i = 0; i < _players->size(); i++) {
+        if (get_players()->at(i)->get_player_name() == removed_player->get_player_name()) {
+            this->_players->erase(this->_players->begin() + i);
+        }
+    }
+}
+
 Tournament::Tournament() {
     _maps = new vector<Map*>();
     _player_strategies = new vector<Strategy*>();
@@ -360,7 +384,7 @@ void Tournament::start() {
         _winning_players[i] = new string[*_nb_games];
         for (int j = 0; j < *_nb_games; j++) {
             Game* game = new Game();
-            auto* winner = game->play_tournament_game(_player_strategies, *_maps->at(0), *_nb_turns);
+            auto* winner = game->play_tournament_game(_player_strategies, *_maps->at(i), *_nb_turns);
             if (winner == nullptr) {
                 _winning_players[i][j] = "Draw";
             } else {
@@ -375,11 +399,11 @@ void Tournament::start() {
 }
 
 void Tournament::select_maps() {
-    cout << "Please choose the number of maps (1-5):" << endl;
+    cout << "Please choose the number of maps (1-4):" << endl;
     int selection = -1;
-    while (selection < 1 || selection > 5) {
+    while (selection < 1 || selection > 4) {
         cin >> selection;
-        if (cin.fail() || (selection < 1 || selection > 2)) {
+        if (cin.fail() || (selection < 1 || selection > 4)) {
             cin.clear();
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             cout << "Invalid input." << endl;
