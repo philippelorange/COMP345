@@ -32,6 +32,10 @@ Card* Card::factory_card(Type* type_ptr, int type_number) {
     return new Card(type_ptr);
 }
 
+Card::~Card() {
+    delete type_;
+}
+
 //End of Card functions
 
 //Beginning of Deck functions
@@ -62,6 +66,13 @@ void Deck::print_card_in_deck() {
     }
 
     cout << "Size of deck " << this->get_deck_cards()->size() << endl;
+}
+
+Deck::~Deck() {
+    for (Card* card: *deck_cards_) {
+        delete card;
+    }
+    delete deck_cards_;
 }
 //End of Deck functions
 
@@ -187,5 +198,12 @@ void Hand::print_card_in_hand() {
     for (Card* hand_card: *this->get_hand_cards()) {
         cout << "Cards in hand: " << hand_card->get_type_name() << endl;
     }
+}
+
+Hand::~Hand() {
+    for (Card* card: *hand_cards_) {
+        delete card;
+    }
+    delete hand_cards_;
 }
 //End of Hand functions

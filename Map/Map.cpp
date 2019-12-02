@@ -1,5 +1,7 @@
 ﻿#include "Map.h"
 
+#include <utility>
+
 Map::Map() :
         continents_(new vector<Continent*>()),
         countries_(new vector<Country*>()) {}
@@ -9,7 +11,7 @@ Map::Map(vector<Continent*>* continents, vector<Country*>* countries) :
         countries_(countries) {}
 
 void Map::set_name(string s) {
-    name = new string(s);
+    name = new string(std::move(s));
 }
 
 string Map::get_name() {
@@ -87,8 +89,12 @@ bool Map::player_has_been_set() {
     return true;
 }
 
+Map::~Map() {
+    // attributes deleted before
+}
+
 Continent::Continent(string name, int control_value) :
-        name_(new string(name)),
+        name_(new string(std::move(name))),
         countries_(new vector<Country*>()),
         control_value_(new int(control_value)) {}
 
@@ -167,6 +173,15 @@ bool Continent::already_added(Country* country) const {
     return false;
 }
 
+Continent::~Continent() {
+    delete name_;
+    for (Country* country : *countries_) {
+        delete country;
+    }
+    delete countries_;
+    delete control_value_;
+}
+
 Country::Country() {
     name_ = nullptr;
     continent_ = nullptr;
@@ -176,7 +191,7 @@ Country::Country() {
 }
 
 Country::Country(string name, Continent* continent) :
-        name_(new string(name)),
+        name_(new string(std::move(name))),
         continent_(continent),
         player_(nullptr),
         nb_armies_(new int(0)),
@@ -204,7 +219,7 @@ int Country::get_nb_armies() const {
 }
 
 void Country::set_name(string name) {
-    name_ = new string(name);
+    name_ = new string(std::move(name));
 }
 
 void Country::set_continent(Continent* continent) {
@@ -237,4 +252,9 @@ bool Country::already_added(Country* country) const {
         }
     }
     return false;
+}
+
+Country::~Country() {
+    delete name_;
+    delete nb_armies_;
 }

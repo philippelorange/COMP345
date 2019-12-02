@@ -340,6 +340,10 @@ void Game::remove_player(Player* removed_player) {
     }
 }
 
+Game::~Game() {
+    // don't delete attributes as they can be re-used (ex: map)
+}
+
 Tournament::Tournament() {
     _maps = new vector<Map*>();
     _player_strategies = new vector<Strategy*>();
@@ -598,6 +602,21 @@ void Tournament::print_results() {
         }
         cout << "|" << endl;
     }
+}
+
+Tournament::~Tournament() {
+    delete _nb_games;
+    delete _nb_turns;
+    delete _nb_maps;
+    delete _winning_players;
+    for (Strategy* strategy : *_player_strategies) {
+        delete strategy;
+    }
+    delete _player_strategies;
+    for (Map* map: *_maps) {
+        delete map;
+    }
+    delete _maps;
 }
 
 void GameEngine::start() {
