@@ -28,7 +28,7 @@ Player* Game::play_tournament_game(vector<Strategy*>* strategies, Map map, int n
     }
 
     for (Country* country : *_selected_map->get_countries()) { // reset country characteristic once a game start
-        country->set_nb_armies(1);
+        country->set_nb_armies(0);
         country->set_player(nullptr);
     }
 
@@ -69,10 +69,6 @@ Player* Game::game_loop(int num_turns) {
             cout << _player->get_player_name() << ", it's your turn to play." << endl;
             reinforcements_phase(_player);
             attack_phase(_player);
-            if (_player->get_player_owned_countries()->empty()) { // Check if player has been eliminated
-                this->remove_player(_player);
-                continue;
-            }
             fortification_phase(_player);
             if (has_victory()) {
                 game_over = true;

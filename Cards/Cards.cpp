@@ -123,10 +123,33 @@ int Hand::exchange(Deck* deck) {
         return 0;
     }
 
+    int nbr_armies = 0;
     static int exchange_counter = 0; // static counter for armies
-    exchange_counter++; // increment every time function get to this point
-    cout << "Player receive " << exchange_counter * 5 << " armies " << endl;
-    return exchange_counter;
+    switch (exchange_counter) {
+        case 0:
+            nbr_armies = 4;
+            break;
+        case 1:
+            nbr_armies = 6;
+            break;
+        case 2:
+            nbr_armies = 8;
+            break;
+        case 3:
+            nbr_armies = 10;
+            break;
+        case 4:
+            nbr_armies = 12;
+            break;
+        default:
+            nbr_armies = 15;
+            break;
+    }
+    exchange_counter++;
+    if (nbr_armies > 14) {
+        return nbr_armies + (exchange_counter * 5);
+    } else { return nbr_armies; }
+
 }
 
 void Hand::exchange_three_different(Deck* deck) {

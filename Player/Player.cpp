@@ -100,8 +100,12 @@ void Player::reinforce() {
 
         //exchange if more than 4 cards
         if (this->hand->get_hand_cards()->size() > 4) {
-            num_armies += this->hand->exchange(this->deck);
+            int* exchange_armies = new int(this->hand->exchange(this->deck));
+            num_armies += *exchange_armies;
+            cout << this->get_player_name() << " has received " << *exchange_armies << " armies from exchanging cards"
+                 << endl;
         }
+
         //if armies is less than 3, set to 3
         if (num_armies < 3) {
             num_armies = 3;
