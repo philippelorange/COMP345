@@ -1,1 +1,1 @@
-# COMP345
+# C++ risk game for COMP345
